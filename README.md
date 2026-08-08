@@ -1,9 +1,25 @@
+NYC 311 Road Surface Complaint Data
 
+# Setup
 
-apikey id = c24qb9umygbmacvgivmalkbu9
+## Dependencies
 
-apikey secret = 3azi9nospl098ri8sardby2dw933nt4l2ca2gajmqm8zmbkmp4
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management.
 
-app token = OWMml8DLCNSTonyfDD98zCc7f
+To install dependencies:
 
-app secret token = po4Vo0Q0cpcgOVDKbTQvPgEZuFpkPUM1130U
+```bash
+uv sync
+```
+
+## Environment Variables
+
+Create a `.env` file in the project root with your Socrata API credentials:
+
+```
+SOCRATA_APP_TOKEN=your_app_token_here
+SOCRATA_API_KEY_ID=your_api_key_id_here
+SOCRATA_API_KEY_SECRET=your_api_key_secret_here
+```
+
+These credentials can be obtained from the [NYC Open Data portal](https://opendata.cityofnewyork.us/).
