@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 
 import argparse
 import duckdb
+import json
 import logging
 import numpy as np
 import os
@@ -74,7 +75,7 @@ CONFIGS = {
     "D (flat-trend)":       {"changepoint_prior_scale": 0.01, "seasonality_prior_scale": 50.0,  "growth": "flat"},
 }
 # Known structural breaks to test as explicit changepoints
-KNOWN_CHANGEPPOINTS = [
+KNOWN_CHANGEPOINTS = [
     "2015-01-01",  # Extreme snowstorms
     "2015-02-01",
     "2015-03-01",
@@ -294,7 +295,7 @@ def _make_prophet_model(model_params: dict) -> Prophet:
     if strategy in NO_CHANGEPOINT_STRATEGIES:
         cp_kwargs["n_changepoints"] = 0
     elif strategy in EVENT_CHANGEPOINT_STRATEGIES:
-        cp_kwargs["changepoints"] = KNOWN_CHANGEPPOINTS
+        cp_kwargs["changepoints"] = KNOWN_CHANGEPOINTS
     elif strategy in {"auto-flexible", "auto-flexible+regressors"}:
         cp_kwargs["n_changepoints"] = 50
 
@@ -326,7 +327,7 @@ def run_cross_validation(model_params: dict, train_df: pd.DataFrame) -> dict:
     model.fit(train_df)
 
     # Ensure sufficient history for each fold (at least 2 years to capture seasonality)
-    latest_event = max(pd.to_datetime(KNOWN_CHANGEPPOINTS))
+    latest_event = max(pd.to_datetime(KNOWN_CHANGEPOINTS))
     min_history = train_df["ds"].min() + pd.DateOffset(years=2)
     first_cutoff = max(min_history, latest_event + pd.DateOffset(months=6))
     last_cutoff = train_df["ds"].max() - pd.DateOffset(months=6)
@@ -541,6 +542,38 @@ def save_outlier_analysis(results: list[dict]):
         logger.error(f"  ERROR: Failed to save {path}: {e}")
         raise
 
+def _make_config_json(result: dict) -> dict:
+    """Extract model configuration from an evaluation result."""
+    name = result["name"]
+    strategy = result["changepoint_strategy"]
+    return {
+        "name": name,
+        "changepoint_strategy": strategy,
+        "growth": result["params"]["growth"],
+        "seasonality_mode": "multiplicative" if "multiplicative" in name else "additive",
+        "changepoint_prior_scale": result["params"]["changepoint_prior_scale"],
+        "seasonality_prior_scale": result["params"]["seasonality_prior_scale"],
+        "regressors": EVENT_REGRESSORS if strategy in REGRESSOR_STRATEGIES else [],
+    }
+
+
+def save_best_model_configs(results: list[dict], artifacts_dir: str) -> None:
+    """Save configurations for best validation and best test models."""
+    best_val = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
+    best_test = min(results, key=lambda r: r["test_metrics"]["MAPE"])
+
+    val_config = _make_config_json(best_val)
+    val_config_path = os.path.join(artifacts_dir, "best_model_config.json")
+    with open(val_config_path, "w") as f:
+        json.dump(val_config, f, indent=2)
+    logger.info("Saved best validation model config to %s", val_config_path)
+
+    test_config = _make_config_json(best_test)
+    test_config_path = os.path.join(artifacts_dir, "best_test_model_config.json")
+    with open(test_config_path, "w") as f:
+        json.dump(test_config, f, indent=2)
+    logger.info("Saved best test model config to %s", test_config_path)
+
 
 
 
@@ -696,6 +729,7 @@ def main():
         df = load_data()
         train_df, _, test_df = split_data(df)
         results = hyperparameter_search(train_df, test_df, df)
+        save_best_model_configs(results, ARTIFACTS_DIR)
         best = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
 
         logger.info(f"\n{'=' * 60}")
