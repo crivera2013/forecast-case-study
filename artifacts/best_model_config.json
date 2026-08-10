@@ -1,6 +1,6 @@
 {
-  "name": "B (multiplicative) | cp=none",
-  "changepoint_strategy": "none",
+  "name": "B (multiplicative) | cp=events",
+  "changepoint_strategy": "events",
   "growth": "linear",
   "seasonality_mode": "multiplicative",
   "changepoint_prior_scale": 0.01,

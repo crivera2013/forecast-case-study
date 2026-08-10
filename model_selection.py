@@ -52,21 +52,8 @@ if args.verbose:
     logger.setLevel(logging.DEBUG)
     logging.getLogger("prophet").setLevel(logging.DEBUG)
 
-# Configuration for validation windows - ensure they don't overlap with test period
-VALIDATION_WINDOWS = [
-    {
-        "name": "Aug 2023-Jul 2024",
-        "train_end": "2023-07-31",
-        "start": "2023-08-01",
-        "end": "2024-07-31",
-    },
-    {
-        "name": "Aug 2024-Jan 2025",  # Adjusted to end before test period
-        "train_end": "2024-07-31",
-        "start": "2024-08-01",
-        "end": "2025-01-31",  # Ends before TEST_START (2025-08-01)
-    },
-]
+# Configuration for cross-validation — ensures sufficient history (at least 2 years) for each fold to capture seasonality.
+# These are passed to Prophet's cross_validation via run_cross_validation.
 
 CONFIGS = {
     "A (additive-smooth)":  {"changepoint_prior_scale": 0.01, "seasonality_prior_scale": 100.0, "growth": "linear"},
@@ -402,20 +389,6 @@ def evaluate_config(name: str, params: dict, changepoint_strategy: str,
     # Fit model once for the full test forecast
     model, forecast = _fit_and_forecast(model_params, train_df, test_df["ds"].max(), model_cache)
 
-    validation_window_metrics = []
-    for window in VALIDATION_WINDOWS:
-        fold_train = full_df[full_df["ds"] <= window["train_end"]].copy()
-        fold_validation = full_df[full_df["ds"].between(window["start"], window["end"])].copy()
-        # Use the same model cache for validation folds
-        _, fold_forecast = _fit_and_forecast(model_params, fold_train, fold_validation["ds"].max(), model_cache)
-        fold_prediction = fold_forecast.merge(fold_validation[["ds", "y"]], on="ds", how="inner")
-        fold_metrics = compute_metrics(fold_prediction["y"], fold_prediction["yhat"])
-        validation_window_metrics.append({"window": window["name"], **fold_metrics})
-
-    validation_metrics = {
-        metric: float(np.mean([item[metric] for item in validation_window_metrics]))
-        for metric in ("MAE", "MAPE", "RMSE")
-    }
     test_pred = forecast.merge(test_df[["ds", "y"]], on="ds", how="inner")
     test_metrics = compute_metrics(test_pred["y"], test_pred["yhat"])
     
@@ -442,8 +415,6 @@ def evaluate_config(name: str, params: dict, changepoint_strategy: str,
         "name": name,
         "params": params,
         "changepoint_strategy": changepoint_strategy,
-        "validation_window_metrics": validation_window_metrics,
-        "validation_metrics": validation_metrics,
         "test_pred": test_pred,
         "test_metrics": test_metrics,
         "stress_pred": stress_pred,
@@ -460,7 +431,7 @@ def hyperparameter_search(train_df: pd.DataFrame, test_df: pd.DataFrame,
     Uses model caching to avoid redundant fits across configurations.
     """
     logger.info(f"\n{'=' * 60}")
-    logger.info("STEP 3-4: Rolling validation & test evaluation")
+    logger.info("STEP 3-4: Cross-validation & test evaluation")
     logger.info("=" * 60)
 
     # Create a shared model cache for all configurations
@@ -474,35 +445,27 @@ def hyperparameter_search(train_df: pd.DataFrame, test_df: pd.DataFrame,
                 full_name, params, cp_name, train_df, test_df, full_df, model_cache
             )
             results.append(result)
-            window_mapes = ", ".join(
-                f"{item['window']}={item['MAPE']:.1f}%"
-                for item in result["validation_window_metrics"]
-            )
-            logger.info(f"Validation avg MAPE={result['validation_metrics']['MAPE']:.1f}% "
-                  f"({window_mapes}), Test MAPE={result['test_metrics']['MAPE']:.1f}%, "
-                  f"CV MAPE={result['cv_metrics']['cv_mape']:.1f}%")
+            logger.info(f"  CV MAPE={result['cv_metrics']['cv_mape']:.1f}%, Test MAPE={result['test_metrics']['MAPE']:.1f}%")
 
-    best = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
+    best = min(results, key=lambda r: r["cv_metrics"]["cv_mape"])
     logger.info(f"\n  Best config: {best['name']} "
-          f"(Rolling validation avg MAPE={best['validation_metrics']['MAPE']:.1f}%, "
+          f"(CV MAPE={best['cv_metrics']['cv_mape']:.1f}%, "
           f"Test MAPE={best['test_metrics']['MAPE']:.1f}%)")
 
-    headers = ["Config", "Trend/Event Strategy", "CP Scale", "Seas Scale"]
-    headers.extend(f"Val {index}" for index, _ in enumerate(VALIDATION_WINDOWS, start=1))
-    headers.extend(["Avg Val MAPE", "Test MAPE"])
+    headers = ["Config", "Trend/Event Strategy", "CP Scale", "Seas Scale", "CV MAPE", "Test MAPE"]
     rows = []
-    for r in results:
+    for r in sorted(results, key=lambda r: r["cv_metrics"]["cv_mape"]):
+        marker = " <<" if r["name"] == best["name"] else ""
         rows.append([
             r["name"],
             r["changepoint_strategy"],
             r["params"]["changepoint_prior_scale"],
             r["params"]["seasonality_prior_scale"],
-            *[f"{item['MAPE']:.1f}%" for item in r["validation_window_metrics"]],
-            f"{r['validation_metrics']['MAPE']:.1f}%",
+            f"{r['cv_metrics']['cv_mape']:.1f}%{marker}",
             f"{r['test_metrics']['MAPE']:.1f}%",
         ])
-    print_table(headers, rows, "Changepoint + Regressor Strategy Comparison")
 
+    print_table(headers, rows, "Changepoint + Regressor Strategy Comparison")
     return results
 
 
@@ -558,8 +521,8 @@ def _make_config_json(result: dict) -> dict:
 
 
 def save_best_model_configs(results: list[dict], artifacts_dir: str) -> None:
-    """Save configurations for best validation and best test models."""
-    best_val = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
+    """Save configurations for best CV MAPE and best test models."""
+    best_val = min(results, key=lambda r: r["cv_metrics"]["cv_mape"])
     best_test = min(results, key=lambda r: r["test_metrics"]["MAPE"])
 
     val_config = _make_config_json(best_val)
@@ -581,7 +544,7 @@ def save_best_model_configs(results: list[dict], artifacts_dir: str) -> None:
 
 def save_metrics_summary(df: pd.DataFrame, results: list[dict]):
     """Write evaluation metrics and event-stress results to metrics_summary.txt."""
-    best = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
+    best = min(results, key=lambda r: r["cv_metrics"]["cv_mape"])
 
     lines = [
         "=" * 60,
@@ -598,18 +561,15 @@ def save_metrics_summary(df: pd.DataFrame, results: list[dict]):
         "    - Apr 2020 dip: KEPT (pandemic structural break)",
         "",
         "All Configurations Comparison:",
-        f"  {'Config':<34} {'Strategy':>20} {'CV MAPE':>10} {'Val 1':>8} {'Val 2':>8} {'Avg Val':>9} {'Test':>8}",
-        f"  {'-'*34} {'-'*20} {'-'*10} {'-'*8} {'-'*8} {'-'*9} {'-'*8}",
+        f"  {'Config':<34} {'Strategy':>20} {'CV MAPE':>10} {'Test':>8}",
+        f"  {'-'*34} {'-'*20} {'-'*10} {'-'*8}",
     ]
-    for r in sorted(results, key=lambda r: r["validation_metrics"]["MAPE"]):
+    for r in sorted(results, key=lambda r: r["cv_metrics"]["cv_mape"]):
         marker = " <<" if r["name"] == best["name"] else ""
-        window_mapes = [item["MAPE"] for item in r["validation_window_metrics"]]
         lines.append(
             f"  {r['name']:<34} {r['changepoint_strategy']:>20} "
             f"{r['cv_metrics']['cv_mape']:>9.1f}% "
-            f"{window_mapes[0]:>7.1f}% {window_mapes[1]:>7.1f}% "
-            f"{r['validation_metrics']['MAPE']:>8.1f}%{marker} "
-            f"{r['test_metrics']['MAPE']:>7.1f}%"
+            f"{r['test_metrics']['MAPE']:>7.1f}%{marker}"
         )
 
     lines.extend([
@@ -619,18 +579,6 @@ def save_metrics_summary(df: pd.DataFrame, results: list[dict]):
         f"  changepoint_prior_scale: {best['params']['changepoint_prior_scale']}",
         f"  seasonality_prior_scale: {best['params']['seasonality_prior_scale']}",
         f"  growth: {best['params'].get('growth', 'linear')}",
-        "",
-        "Rolling Validation Metrics (selection uses average MAPE):",
-    ])
-    for item in best["validation_window_metrics"]:
-        lines.append(
-            f"  {item['window']}: MAE={item['MAE']:.0f}, "
-            f"MAPE={item['MAPE']:.1f}%, RMSE={item['RMSE']:.0f}"
-        )
-    lines.extend([
-        f"  Average: MAE={best['validation_metrics']['MAE']:.0f}, "
-        f"MAPE={best['validation_metrics']['MAPE']:.1f}%, "
-        f"RMSE={best['validation_metrics']['RMSE']:.0f}",
         "",
         f"Cross-Validation Metrics ({best['cv_metrics']['num_folds']} folds, 6-month horizon):",
         f"  MAE:  {best['cv_metrics']['cv_mae']:.0f}",
@@ -691,7 +639,7 @@ def save_metrics_summary(df: pd.DataFrame, results: list[dict]):
 
 def print_console_summary(df: pd.DataFrame, results: list[dict]):
     """Print the evaluation summary without producing a future forecast."""
-    best = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
+    best = min(results, key=lambda r: r["cv_metrics"]["cv_mape"])
 
     logger.info(f"\n{'=' * 60}")
     logger.info("EVALUATION SUMMARY")
@@ -700,17 +648,17 @@ def print_console_summary(df: pd.DataFrame, results: list[dict]):
     logger.info(f"  {len(df)} months, {df['y'].sum():,} total complaints")
     logger.info("  Dropped incomplete Aug 2026; kept March 2026 event spike")
     
-    # Update stress test reference to be dynamic
+    # Stress test reference is dynamic
     if len(best["stress_pred"]) > 0:
         stress_test_name = "Dynamic Outliers" if len(best["stress_pred"]) > 1 else "March 2026"
-        logger.info(f"\nSelected by rolling validation: {best['name']} / {best['changepoint_strategy']}")
-        logger.info(f"  Validation MAPE={best['validation_metrics']['MAPE']:.1f}%")
+        logger.info(f"\nSelected by CV MAPE: {best['name']} / {best['changepoint_strategy']}")
+        logger.info(f"  CV MAPE={best['cv_metrics']['cv_mape']:.1f}%")
         logger.info(f"  Held-out test MAPE={best['test_metrics']['MAPE']:.1f}%")
         logger.info(f"  Test MAPE excluding outliers={best['clean_test_metrics']['MAPE']:.1f}%")
         logger.info(f"  {stress_test_name} stress MAPE={best['stress_metrics']['MAPE']:.1f}%")
     else:
-        logger.info(f"\nSelected by rolling validation: {best['name']} / {best['changepoint_strategy']}")
-        logger.info(f"  Validation MAPE={best['validation_metrics']['MAPE']:.1f}%")
+        logger.info(f"\nSelected by CV MAPE: {best['name']} / {best['changepoint_strategy']}")
+        logger.info(f"  CV MAPE={best['cv_metrics']['cv_mape']:.1f}%")
         logger.info(f"  Held-out test MAPE={best['test_metrics']['MAPE']:.1f}%")
         logger.info(f"  Test MAPE excluding outliers={best['clean_test_metrics']['MAPE']:.1f}%")
     
@@ -730,7 +678,7 @@ def main():
         train_df, _, test_df = split_data(df)
         results = hyperparameter_search(train_df, test_df, df)
         save_best_model_configs(results, ARTIFACTS_DIR)
-        best = min(results, key=lambda r: r["validation_metrics"]["MAPE"])
+        best = min(results, key=lambda r: r["cv_metrics"]["cv_mape"])
 
         logger.info(f"\n{'=' * 60}")
         logger.info("STEP 5: Store evaluation artifacts")
