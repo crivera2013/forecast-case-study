@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NYC Pothole Forecast · Executive Decision Briefing & Case Study</title>
+  <meta name="description" content="Executive decision briefing and predictive time-series forecast for NYC 311 pothole complaints using Prophet, validated across 200 months of historical data.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- Top Executive Header -->
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#slide-1">
+        <span class="brand-badge">NYC DOT</span>
+        <span>Pothole Forecast &amp; Planning</span>
+      </a>
+      <div class="header-controls">
+        <ul class="nav-list" id="nav-menu">
+          <li><a href="#slide-1" class="is-active">Summary</a></li>
+          <li><a href="#slide-2">9-Mo Forecast</a></li>
+          <li><a href="#slide-3">History</a></li>
+          <li><a href="#slide-4">Seasonality</a></li>
+          <li><a href="#slide-5">Model Selection</a></li>
+          <li><a href="#slide-6">Stress Test</a></li>
+          <li><a href="#slide-7">Methodology</a></li>
+          <li><a href="#slide-8">Roadmap</a></li>
+        </ul>
+        <button type="button" class="btn-mode-toggle" id="btn-mode-toggle" aria-pressed="false" title="Toggle between Slideshow Mode and Document View">
+          <span id="mode-icon">📽️</span>
+          <span id="mode-text">Deck View</span>
+        </button>
+        <button type="button" class="btn-fullscreen" id="btn-fullscreen" title="Toggle Fullscreen Presentation Mode">
+          <span>⛶</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <!-- ─── Slide 1: Executive Summary & High-Level Results ──────────────── -->
+    <section class="slide slide-hero" id="slide-1" aria-labelledby="title-slide-1">
+      <div class="hero-content">
+        <div class="hero-tag">Executive Briefing · Street Maintenance Strategy</div>
+        <h1 id="title-slide-1">NYC Pothole Complaints Forecast</h1>
+        <p class="hero-claim"><strong>What this report is:</strong> A 9-month predictive forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027) modeled from 200 months of historical data (991,071 complaints).</p>
+        <p class="hero-claim" style="font-size: 1.05rem; margin-top: -1.2rem; color: var(--ink-67);"><strong>Goal:</strong> To forecast the number of pothole complaints so that NYC Department of Transportation (DOT) can plan ahead to meet the demand. With significantly increased snowfall in 2026, pothole occurances will increase this year and DOT must be prepared to meet the moment.</p>
+        
+        <div class="hero-metrics-grid" aria-label="Executive KPI Metrics" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+          <article class="metric-card accent-turquoise">
+            <span class="metric-title">Immediate Volume (Aug '26)</span>
+            <span class="metric-value" id="kpi-aug-val">2,758</span>
+            <p class="metric-desc">Baseline summer volume (~2.8k/mo).</p>
+          </article>
+          <article class="metric-card accent-red">
+            <span class="metric-title">Projected Peak (Mar '27)</span>
+            <span class="metric-value" id="kpi-mar-val">10,810</span>
+            <p class="metric-desc">+270% annual freeze-thaw surge.</p>
+          </article>
+          <article class="metric-card accent-yellow">
+            <span class="metric-title">Historical Weather Spike</span>
+            <span class="metric-value" id="kpi-outlier-val">25,171</span>
+            <p class="metric-desc">March 2026 5.1× baseline weather anomaly.</p>
+          </article>
+        </div>
+        <div class="hero-cta-group">
+          <a class="btn btn-primary" href="#slide-2">View 9-Month Forecast →</a>
+          <a class="btn btn-secondary" href="#slide-5">Model Selection</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Slide 2: 9-Month Complaints Forecast ────────────────────────── -->
+    <section class="slide" id="slide-2" aria-labelledby="title-slide-2">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 2 · Operational Forecast</span>
+        <h2 id="title-slide-2">9-Month Complaints Forecast (Aug 2026 – Apr 2027)</h2>
+        <p class="lead">Complaints remain at baseline through autumn (~2.2k–2.8k/mo), then surge to 10.8k in late winter. 2 forecasting models and the 2015 complaint history are shown to provide leadership with insight over how many complaints there will probably be.</p>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <span class="chart-title">Monthly Complaint Projections with 95% Confidence Bounds</span>
+          <span class="footnote">Click legend to toggle series. Hover points for exact counts.</span>
+        </div>
+        <div id="forecast-chart" class="chart-figure"></div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-scroll">
+          <table class="data-table" id="forecast-table" aria-label="9-Month Forecast Data Table">
+            <thead>
+              <tr>
+                <th scope="col">Month</th>
+                <th scope="col">Primary Forecast</th>
+                <th scope="col">Event-Aware Alt</th>
+                <th scope="col">2015 Snow Benchmark</th>
+                <th scope="col">Seasonal Pattern</th>
+              </tr>
+            </thead>
+            <tbody><!-- Populated dynamically via JS --></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="decision-box">
+        <h4>Operational Advisory for Leadership</h4>
+        <p>Due to unusually heavy snowfall in NYC this year, actual complaint volumes over the next ~3–4 months (Aug–Nov 2026) are likely to track higher than the baseline model prediction. Operations and maintenance crews should plan capacity toward the upper forecast range or the Event-Aware alternate model.</p>
+      </div>
+    </section>
+
+    <!-- ─── Slide 3: Historical Baseline ─────────────────────────────────── -->
+    <section class="slide" id="slide-3" aria-labelledby="title-slide-3">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 3 · Historical Context</span>
+        <h2 id="title-slide-3">200-Month Baseline &amp; Historical Shocks (2009–2026)</h2>
+        <p class="lead">991,071 total complaints. Predictable annual winter surges with major weather shifts.</p>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <span class="chart-title">NYC 311 Monthly Pothole Complaints (Dec 2009 – Jul 2026)</span>
+          <span class="footnote">Hover line to inspect monthly counts and historical events.</span>
+        </div>
+        <div id="history-chart" class="chart-figure"></div>
+      </div>
+
+      <div class="executive-insights-grid">
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-blue">1</span>
+            <h4>Total Volume</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li>991,071 complaints across 200 months.</li>
+            <li>City-wide monthly average: ~4,955 complaints.</li>
+          </ul>
+        </div>
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-yellow">2</span>
+            <h4>2015 Snowstorms</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li>Severe polar vortex blizzards in Jan–Mar 2015.</li>
+            <li>Shifted baseline damage upward by ~20%.</li>
+          </ul>
+        </div>
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-red">3</span>
+            <h4>March 2026 Spike</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li>All-time record of 25,171 complaints.</li>
+            <li>5.1× baseline extreme freeze-thaw anomaly.</li>
+          </ul>
+        </div>
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-turquoise">4</span>
+            <h4>Objective</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li>Forecast monthly complaints 9 months ahead.</li>
+            <li>Quantify seasonal freeze-thaw surge timing.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Slide 4: Seasonality ─────────────────────────────────────────── -->
+    <section class="slide" id="slide-4" aria-labelledby="title-slide-4">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 4 · Cyclical Drivers</span>
+        <h2 id="title-slide-4">Seasonal Multipliers &amp; Freeze-Thaw Cyclicity</h2>
+        <p class="lead">Pothole generation is multiplicative: winter freeze-thaw scales complaints proportionally over baseline.</p>
+      </div>
+
+      <div class="split-layout">
+        <div class="chart-container">
+          <div class="chart-header">
+            <span class="chart-title">Monthly Multiplicative Seasonal Component</span>
+          </div>
+          <div id="seasonality-chart" class="chart-figure"></div>
+        </div>
+
+        <div class="card-stack">
+          <article class="info-card">
+            <h4><span class="exec-icon exec-icon-red">↑</span> March Peak (+148%)</h4>
+            <ul class="snappy-bullets">
+              <li>Annual peak in all 16 historical years.</li>
+              <li>32°F (0°C) freeze-thaw cycling ruptures roadbeds.</li>
+            </ul>
+          </article>
+          <article class="info-card">
+            <h4><span class="exec-icon exec-icon-turquoise">↓</span> November Low (-36%)</h4>
+            <ul class="snappy-bullets">
+              <li>Annual complaint trough across NYC.</li>
+              <li>Dry, stable autumn weather limits surface breaks.</li>
+            </ul>
+          </article>
+          <article class="info-card">
+            <h4><span class="exec-icon exec-icon-yellow">⚡</span> Proportional Scaling</h4>
+            <ul class="snappy-bullets">
+              <li>Surges scale with baseline volume (+50% to +150%).</li>
+              <li>Multiplicative mode prevents summer overprediction.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Slide 5: Model Selection ─────────────────────────────────────── -->
+    <section class="slide" id="slide-5" aria-labelledby="title-slide-5">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 5 · Model Selection</span>
+        <h2 id="title-slide-5">Model Selection &amp; Empirical Validation</h2>
+        <p class="lead">28 Prophet configurations evaluated. Multiplicative seasonality with linear growth won with 11.4% validation MAPE.</p>
+      </div>
+
+      <div class="mape-callout">
+        <strong>What is MAPE?</strong> <strong>Mean Absolute Percentage Error (MAPE)</strong> measures average forecast error as a percentage of actual complaints: <code>avg(|Actual − Predicted| / Actual) × 100%</code>. Lower is better (11.4% error = 88.6% forecast accuracy).
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <span class="chart-title">Top Configurations Ranked by Average Validation MAPE</span>
+          <span class="footnote">Lower is better; winner highlighted in red.</span>
+        </div>
+        <div id="models-chart" class="chart-figure"></div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-scroll">
+          <table class="data-table" id="models-table" aria-label="Model Performance Comparison">
+            <thead>
+              <tr>
+                <th scope="col">Configuration</th>
+                <th scope="col">Val 1 (2023-24)</th>
+                <th scope="col">Val 2 (2024-25)</th>
+                <th scope="col">Avg Val MAPE</th>
+                <th scope="col">14-Fold CV</th>
+                <th scope="col">Held-Out Test</th>
+              </tr>
+            </thead>
+            <tbody><!-- Populated dynamically via JS --></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Slide 6: Outlier Stress-Testing ──────────────────────────────── -->
+    <section class="slide" id="slide-6" aria-labelledby="title-slide-6">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 6 · Stress-Testing</span>
+        <h2 id="title-slide-6">Stress-Testing: March 2026 Weather Anomaly</h2>
+        <p class="lead">March 2026 actuals (25,171) vs baseline forecast (7,036). Test MAPE: 33.9% with outlier, 30.4% without.</p>
+      </div>
+
+      <div class="split-layout">
+        <div class="chart-container">
+          <div class="chart-header">
+            <span class="chart-title">12-Month Held-Out Test Evaluation (Aug 2025 – Jul 2026)</span>
+            <span class="footnote">Actuals vs Baseline Prediction</span>
+          </div>
+          <div id="validation-chart" class="chart-figure"></div>
+        </div>
+
+        <div class="table-container" style="margin: 0;">
+          <div class="table-scroll">
+            <table class="data-table" id="validation-table" aria-label="Test Period Monthly Actual vs Predicted">
+              <thead>
+                <tr>
+                  <th scope="col">Month</th>
+                  <th scope="col">Actual</th>
+                  <th scope="col">Predicted</th>
+                  <th scope="col">Variance</th>
+                </tr>
+              </thead>
+              <tbody><!-- Populated dynamically via JS --></tbody>
+            </table>
+          </div>
+        </div>
+      <div class="decision-box">
+        <h4>Outlier Handling Decision</h4>
+        <ul class="snappy-bullets">
+          <li><strong>Genuine Event:</strong> Confirmed as an extreme weather anomaly, not data error.</li>
+          <li><strong>Model Calibration:</strong> Excluding March 2026 yields 30.4% test MAPE.</li>
+          <li><strong>Risk Planning:</strong> Retaining the outlier prevents understating severe winter risk.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ─── Slide 7: Methodology & Specifications ────────────────────────── -->
+    <section class="slide" id="slide-7" aria-labelledby="title-slide-7">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 7 · Methodology</span>
+        <h2 id="title-slide-7">Methodology, Parameters &amp; Pipeline</h2>
+        <p class="lead">Production Prophet pipeline: linear trend, multiplicative yearly seasonality, Bayesian uncertainty.</p>
+      </div>
+
+      <div class="roadmap-grid">
+        <div class="roadmap-card">
+          <h3>1. Data Preparation</h3>
+          <ul class="roadmap-list">
+            <li><strong>Source:</strong> NYC 311 Service Requests Open Data.</li>
+            <li><strong>Filter:</strong> <code>Street Condition</code> / <code>Pothole</code>.</li>
+            <li><strong>Aggregation:</strong> 200 clean months (Dec 2009 – Jul 2026).</li>
+            <li><strong>Cleaning:</strong> Dropped partial Aug 2026.</li>
+          </ul>
+        </div>
+
+        <div class="roadmap-card">
+          <h3>2. Prophet Model</h3>
+          <ul class="roadmap-list">
+            <li><strong>Model Formula:</strong> <code>y(t) = Trend × (1 + Yearly Seasonality)</code>.</li>
+            <li><strong>Changepoint Prior:</strong> <code>0.01</code> (conservative).</li>
+            <li><strong>Seasonality Prior:</strong> <code>100.0</code> (strong).</li>
+            <li><strong>Uncertainty:</strong> 300 MCMC samples (95% CI).</li>
+          </ul>
+        </div>
+
+        <div class="roadmap-card">
+          <h3>3. Validation Framework</h3>
+          <ul class="roadmap-list">
+            <li><strong>Window 1 (2023-24):</strong> 6.0% validation MAPE.</li>
+            <li><strong>Window 2 (2024-25):</strong> 16.8% validation MAPE.</li>
+            <li><strong>Cross-Validation:</strong> 14 rolling folds (21.7% MAPE).</li>
+            <li><strong>Delivery:</strong> Pure static SVG in browser.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Slide 8: Roadmap & Limitations ───────────────────────────────── -->
+    <section class="slide" id="slide-8" aria-labelledby="title-slide-8">
+      <div class="slide-header">
+        <span class="slide-tag">Slide 8 · Future Roadmap</span>
+        <h2 id="title-slide-8">Roadmap &amp; Next Steps</h2>
+        <p class="lead">High-impact analytical extensions to expand the forecasting engine.</p>
+      </div>
+
+      <div class="executive-insights-grid">
+        <div class="exec-card">
+          <h4>1. Weather Regressors</h4>
+          <ul class="snappy-bullets">
+            <li>Integrate NOAA daily temperature, snowfall, and freeze-thaw cycles.</li>
+          </ul>
+        </div>
+        <div class="exec-card">
+          <h4>2. Borough Disaggregation</h4>
+          <ul class="snappy-bullets">
+            <li>Disaggregate forecast by borough for localized dispatching.</li>
+          </ul>
+        </div>
+        <div class="exec-card">
+          <h4>3. Budget Linkage</h4>
+          <ul class="snappy-bullets">
+            <li>Translate complaints to asphalt tonnage and labor hours.</li>
+          </ul>
+        </div>
+        <div class="exec-card">
+          <h4>4. Automated CI/CD</h4>
+          <ul class="snappy-bullets">
+            <li>Automate monthly retraining via GitHub Actions on 311 updates.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="decision-box">
+        <h4>Data Sources &amp; Code</h4>
+        <p>
+          Dataset: <a href="https://data.cityofnewyork.us/Social-Services/311-Service-Requests/erm2-nwe9" target="_blank" rel="noopener">NYC 311 Service Requests</a> · 
+          Repository: <a href="https://github.com/crivera2013/forecast-case-study" target="_blank" rel="noopener">github.com/crivera2013/forecast-case-study</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ─── Slideshow Dock Controls ───────────────────────────────────────── -->
+  <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
+    <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
+    <div class="deck-dots" id="deck-dots" role="tablist" aria-label="Slide selectors"></div>
+    <span class="deck-counter" id="deck-counter" aria-live="polite">Slide 1 of 8</span>
+    <button type="button" class="deck-btn" id="deck-next" title="Next Slide (Right Arrow or Space)" aria-label="Next slide">›</button>
+  </nav>
+
+  <footer class="site-footer">
+    <p><strong>NYC Pothole Complaints Forecast</strong></p>
+    <p>Static case study hosted on GitHub Pages · Pure HTML/CSS/SVG · No runtime server dependencies.</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
