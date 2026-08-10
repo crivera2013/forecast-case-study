@@ -242,17 +242,19 @@ function calculateYRange(activeSeries, opts) {
   
   if (allPoints.length === 0) return { min: 0, max: 0 };
   
-  let yMinVal = 0;
-  if (opts.includeZero === false) {
+  let yMinVal = opts.yMin ?? 0;
+  if (opts.includeZero === false && opts.yMin === undefined) {
     yMinVal = Math.min(...allPoints.map((p) => p.y));
   }
-  let yMaxVal = Math.max(...allPoints.map((p) => p.y));
+  let yMaxVal = opts.yMax ?? Math.max(...allPoints.map((p) => p.y));
   
   // Factor in bands if present
-  for (const s of activeSeries) {
-    if (s.band && Array.isArray(s.band.upper)) {
-      for (const u of s.band.upper) {
-        if (Number.isFinite(u) && u > yMaxVal) yMaxVal = u;
+  if (opts.yMax === undefined) {
+    for (const s of activeSeries) {
+      if (s.band && Array.isArray(s.band.upper)) {
+        for (const u of s.band.upper) {
+          if (Number.isFinite(u) && u > yMaxVal) yMaxVal = u;
+        }
       }
     }
   }
@@ -303,8 +305,8 @@ export function lineChart(container, opts = {}) {
   if (!container) return;
   const width = opts.width || 1000;
   const height = opts.height || 360;
-  const pad = { top: 32, right: 28, bottom: 44, left: 68, ...opts.pad };
-
+  const defaultLeft = opts.yLabel ? 76 : 58;
+  const pad = { top: 32, right: 20, bottom: 36, left: defaultLeft, ...opts.pad };
   const seriesState = opts.series.map((s) => ({ ...s, visible: s.visible !== false }));
 
   function render() {
@@ -325,10 +327,13 @@ export function lineChart(container, opts = {}) {
     const xMin = Math.min(...allPoints.map((p) => p.x));
     const xMax = Math.max(...allPoints.map((p) => p.x));
     const yRange = calculateYRange(activeSeries, opts);
-    const yAxis = niceTicks(yRange.min, yRange.max, 4);
+    const yAxis = opts.yTicks
+      ? { ticks: opts.yTicks, min: opts.yTicks[0], max: opts.yTicks[opts.yTicks.length - 1] }
+      : niceTicks(yRange.min, yRange.max, opts.yTickCount ?? 4);
     
     // Create scale functions
     const { x, y } = createScales(width, height, pad, xMin, xMax, yAxis, isDiscrete, dateKeys);
+    const yZero = y(0);
     const svg = el("svg", {
       viewBox: `0 0 ${width} ${height}`,
       class: "interactive-svg",
@@ -360,15 +365,13 @@ export function lineChart(container, opts = {}) {
     // Y Axis Label
     if (opts.yLabel) {
       const yMid = (height - pad.top - pad.bottom) / 2 + pad.top;
+      const xPos = 18;
       const yLabelText = el("text", {
         class: "axis-title",
-        x: pad.left - 30,
+        x: xPos,
         y: yMid,
-        "text-anchor": "end",
-        "transform": `rotate(-90, ${pad.left - 30}, ${yMid})`,
-        fill: "#000",
-        "font-size": "12px",
-        "font-weight": "600",
+        "text-anchor": "middle",
+        "transform": `rotate(-90, ${xPos}, ${yMid})`,
       });
       yLabelText.textContent = opts.yLabel;
       svg.appendChild(yLabelText);
@@ -378,7 +381,6 @@ export function lineChart(container, opts = {}) {
     if (isDiscrete && dateKeys.length > 0) {
       for (const k of dateKeys) {
         const xi = x(k + "-01");
-        svg.appendChild(el("line", { class: "grid-line", x1: xi, x2: xi, y1: pad.top, y2: height - pad.bottom, "stroke-dasharray": "2 2" }));
         svg.appendChild(el("line", { class: "axis-mark", x1: xi, x2: xi, y1: height - pad.bottom, y2: height - pad.bottom + 5 }));
         const label = el("text", { class: "axis-tick", x: xi, y: height - pad.bottom + 18, "text-anchor": "middle" });
         label.textContent = monthLabel(k + "-01");
@@ -416,9 +418,10 @@ export function lineChart(container, opts = {}) {
         txtX = badgeX + badgeW / 2;
       }
 
+      const badgeY = Math.max(4, pad.top - 24);
       const badge = el("rect", {
         x: badgeX,
-        y: pad.top - 24,
+        y: badgeY,
         width: badgeW,
         height: 20,
         rx: 4,
@@ -427,7 +430,7 @@ export function lineChart(container, opts = {}) {
       const txt = el("text", {
         class: "event-badge-txt",
         x: txtX,
-        y: pad.top - 10,
+        y: badgeY + 14,
         "text-anchor": "middle",
       });
       txt.textContent = e.label;
@@ -457,6 +460,33 @@ export function lineChart(container, opts = {}) {
       }
     }
 
+
+
+    // Render area fills before lines (so lines draw on top)
+    if (opts.areaFill) {
+      const defs = el("defs", {});
+      const gradient = el("linearGradient", { id: "area-grad", x1: "0", y1: "0", x2: "0", y2: "1" });
+      gradient.innerHTML = `
+        <stop offset="0%" stop-color="#4dc0c0" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#4dc0c0" stop-opacity="0.02"/>
+      `;
+      defs.appendChild(gradient);
+      svg.appendChild(defs);
+
+      for (const s of activeSeries) {
+        if (!s.area) continue;
+        const pts = s.values.filter((p) => Number.isFinite(p.y));
+        if (!pts.length) continue;
+        const d = [
+          ...pts.map((p) => `L ${x(p.x)} ${y(p.y)}`),
+          `L ${x(pts[pts.length - 1].x)} ${yZero}`,
+          `L ${x(pts[0].x)} ${yZero}`,
+          "Z",
+        ].join(" ").replace(/^L/, "M");
+        svg.appendChild(el("path", { class: "chart-area", d, fill: "url(#area-grad)" }));
+      }
+    }
+
     // Render Lines
     for (const s of activeSeries) {
       const pts = s.values.filter((p) => Number.isFinite(p.y));
@@ -475,7 +505,7 @@ export function lineChart(container, opts = {}) {
         fill: "none",
       }));
 
-      // Render points if sparse or enabled
+      // Render points (hidden by default, shown on hover)
       if (opts.showPoints || pts.length <= 24) {
         const pointsGroup = el("g", { class: "points-group" });
         for (const p of pts) {
@@ -555,6 +585,10 @@ export function lineChart(container, opts = {}) {
       let tooltipRows = [];
       let activeCount = 0;
 
+      // Hide all chart points, then reveal the matched one
+      const allPoints = svg.querySelectorAll(".chart-point");
+      allPoints.forEach((p) => { p.style.opacity = "0"; });
+
       hoverDots.forEach(({ dot, series }) => {
         const matchIdx = series.values.findIndex((p) => normalizeDateMonth(p.x) === normalizeDateMonth(closestDate));
         if (matchIdx !== -1) {
@@ -564,6 +598,13 @@ export function lineChart(container, opts = {}) {
           dot.setAttribute("cx", crossX);
           dot.setAttribute("cy", py);
           activeCount++;
+
+          // Reveal the matching chart point
+          const pointSelector = `.chart-point.${series.className || "series-actual"}`;
+          const pointEls = svg.querySelectorAll(pointSelector);
+          if (pointEls[matchIdx]) {
+            pointEls[matchIdx].style.opacity = "1";
+          }
 
           let ciText = "";
           if (series.band && series.band.lower && series.band.upper) {
@@ -604,11 +645,21 @@ export function lineChart(container, opts = {}) {
     svg.addEventListener("pointerleave", () => {
       hoverGroup.style.display = "none";
       hideTooltip();
+      const allPoints = svg.querySelectorAll(".chart-point");
+      allPoints.forEach((p) => { p.style.opacity = "0"; });
     });
 
     const legendNode = createLegend();
     container.innerHTML = "";
-    if (legendNode) container.appendChild(legendNode);
+    const containerParent = container.closest(".chart-container") || container.parentElement;
+    const header = containerParent?.querySelector(".chart-header");
+    if (header) {
+      const oldLegend = header.querySelector(".chart-legend-interactive");
+      if (oldLegend) oldLegend.remove();
+      if (legendNode) header.appendChild(legendNode);
+    } else if (legendNode) {
+      container.appendChild(legendNode);
+    }
     container.appendChild(svg);
   }
 
@@ -624,7 +675,9 @@ export function lineChart(container, opts = {}) {
       btn.type = "button";
       btn.className = `legend-chip ${s.className || "series-actual"} ${s.visible ? "is-active" : "is-muted"}`;
       btn.setAttribute("aria-pressed", s.visible ? "true" : "false");
+      const bandHtml = s.band ? '<span class="legend-band"></span>' : '';
       btn.innerHTML = `
+        ${bandHtml}
         <span class="legend-indicator"></span>
         <span class="legend-text">${s.label}</span>
       `;
@@ -858,4 +911,291 @@ export function enhanceTable(tableId, options = {}) {
     });
   }
 
+}
+
+/* ─── Interactive Executive Model Comparison Heatmaps ────────────────────── */
+
+function getHeatmapColor(val) {
+  // Best (<15%): Mint / Teal
+  if (val <= 15.0) {
+    return {
+      bg: "#def5f0",
+      text: "#007873",
+      border: "#1ba39c",
+      badgeBg: "#007873",
+    };
+  }
+  // Good (15.1% - 22%): Pale Sage Green
+  if (val <= 22.0) {
+    return {
+      bg: "#e5f5ec",
+      text: "#1fa824",
+      border: "#8cd790",
+      badgeBg: "#1fa824",
+    };
+  }
+  // Moderate (22.1% - 30%): Warm Cream / Amber
+  if (val <= 30.0) {
+    return {
+      bg: "#fff7de",
+      text: "#bf8200",
+      border: "#ffad00",
+      badgeBg: "#bf8200",
+    };
+  }
+  // High Error (>30%): Soft Rose / Red
+  return {
+    bg: "#ffeded",
+    text: "#c20029",
+    border: "#660026",
+    badgeBg: "#c20029",
+  };
+}
+
+export function heatmapGrid(container, heatmaps = []) {
+  if (!container) return;
+
+  // If dashboard already exists in HTML (static markup), progressively enhance it
+  const existingDashboard = container.classList.contains("heatmap-dashboard") ? container : container.querySelector(".heatmap-dashboard");
+  if (existingDashboard) {
+    const pillBtns = existingDashboard.querySelectorAll(".heatmap-pill-btn");
+    const strips = existingDashboard.querySelectorAll(".hm-strip-section");
+    const cells = existingDashboard.querySelectorAll(".hm-strip-cell");
+
+    pillBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        pillBtns.forEach((b) => {
+          b.classList.remove("is-active");
+          b.setAttribute("aria-selected", "false");
+        });
+        btn.classList.add("is-active");
+        btn.setAttribute("aria-selected", "true");
+        const targetTab = btn.getAttribute("data-tab");
+
+        strips.forEach((s) => {
+          if (targetTab === "all" || s.getAttribute("data-regime") === targetTab) {
+            s.style.display = "grid";
+          } else {
+            s.style.display = "none";
+          }
+        });
+      });
+    });
+
+    cells.forEach((td) => {
+      const tip = td.getAttribute("data-tip");
+      if (tip) {
+        const tipContent = `<div class="tooltip-heading" style="font-size:0.84rem;line-height:1.4;">${tip}</div>`;
+        function onHover() {
+          const r = td.getBoundingClientRect();
+          showTooltip(tipContent, r.left + r.width / 2, r.top);
+        }
+        td.addEventListener("mouseenter", onHover);
+        td.addEventListener("mouseleave", hideTooltip);
+        td.addEventListener("focus", onHover);
+        td.addEventListener("blur", hideTooltip);
+      }
+    });
+    return;
+  }
+
+  container.innerHTML = "";
+  let activeTab = "all"; // 'all' | 'val2' | 'cv' | 'test'
+
+  // Wrapper
+  const dashboard = document.createElement("div");
+  dashboard.className = "heatmap-dashboard";
+
+  // Top Toolbar: View Switcher + Unified Legend
+  const toolbar = document.createElement("div");
+  toolbar.className = "heatmap-toolbar";
+
+  // Segmented Pill Buttons
+  const nav = document.createElement("div");
+  nav.className = "heatmap-nav-pills";
+  nav.setAttribute("role", "tablist");
+  nav.setAttribute("aria-label", "Heatmap view modes");
+
+  const views = [
+    { id: "all", label: "📊 All 3 Regimes" },
+    { id: "val2", label: "1. Validation 2" },
+    { id: "cv", label: "2. Cross-Validation" },
+    { id: "test", label: "3. Real-World Test" },
+  ];
+
+  views.forEach((v) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `heatmap-pill-btn ${activeTab === v.id ? "is-active" : ""}`;
+    btn.textContent = v.label;
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", activeTab === v.id ? "true" : "false");
+    btn.addEventListener("click", () => {
+      activeTab = v.id;
+      nav.querySelectorAll(".heatmap-pill-btn").forEach((b, i) => {
+        const isActive = views[i].id === activeTab;
+        b.classList.toggle("is-active", isActive);
+        b.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+      renderContent();
+    });
+    nav.appendChild(btn);
+  });
+
+  // Unified Legend
+  const legend = document.createElement("div");
+  legend.className = "heatmap-global-legend";
+  legend.innerHTML = `
+    <span class="legend-chip-guide"><span class="legend-swatch" style="background:#def5f0;border-color:#1ba39c;"></span> ≤15% (Best)</span>
+    <span class="legend-chip-guide"><span class="legend-swatch" style="background:#e5f5ec;border-color:#8cd790;"></span> 16–22% (Good)</span>
+    <span class="legend-chip-guide"><span class="legend-swatch" style="background:#fff7de;border-color:#ffad00;"></span> 23–30% (Moderate)</span>
+    <span class="legend-chip-guide"><span class="legend-swatch" style="background:#ffeded;border-color:#660026;"></span> &gt;30% (High Error)</span>
+  `;
+
+  toolbar.appendChild(nav);
+  toolbar.appendChild(legend);
+  dashboard.appendChild(toolbar);
+
+  // Body container for the cards
+  const bodyContainer = document.createElement("div");
+  bodyContainer.className = "heatmap-body-container";
+  dashboard.appendChild(bodyContainer);
+
+  function createMatrixStrip(hm) {
+    const section = document.createElement("div");
+    section.className = "hm-strip-section";
+
+    // Left Column: Header
+    const leftCol = document.createElement("div");
+    leftCol.className = "hm-strip-meta";
+    leftCol.innerHTML = `
+      <div class="hm-strip-title-row">
+        <span class="hm-badge ${hm.badgeClass || "badge-turquoise"}">${hm.badge}</span>
+        <h3 class="hm-strip-title">${hm.title}</h3>
+      </div>
+      <p class="hm-strip-desc">${hm.subtitle}</p>
+    `;
+    section.appendChild(leftCol);
+
+    // Right Column: Full Matrix Table
+    const matrixWrap = document.createElement("div");
+    matrixWrap.className = "hm-strip-matrix-wrap";
+
+    const table = document.createElement("table");
+    table.className = "hm-strip-table";
+    table.setAttribute("role", "grid");
+    table.setAttribute("aria-label", `${hm.title} Comparison Matrix`);
+
+    // Col headers
+    const thead = document.createElement("thead");
+    const headTr = document.createElement("tr");
+    
+    const cornerTh = document.createElement("th");
+    cornerTh.className = "hm-strip-corner";
+    cornerTh.textContent = "Model";
+    headTr.appendChild(cornerTh);
+
+    hm.columns.forEach((colName) => {
+      const th = document.createElement("th");
+      th.className = "hm-strip-th";
+      th.textContent = colName;
+      headTr.appendChild(th);
+    });
+    thead.appendChild(headTr);
+    table.appendChild(thead);
+
+    // Body
+    const tbody = document.createElement("tbody");
+    const allVals = hm.rows.flatMap((r) => r.values);
+    const bestVal = Math.min(...allVals);
+
+    hm.rows.forEach((row) => {
+      const tr = document.createElement("tr");
+      
+      const rowTh = document.createElement("th");
+      rowTh.className = "hm-strip-row-hdr";
+      rowTh.textContent = row.name;
+      tr.appendChild(rowTh);
+
+      row.values.forEach((val, colIdx) => {
+        const td = document.createElement("td");
+        td.className = "hm-strip-cell";
+        td.setAttribute("tabindex", "0");
+        td.setAttribute("role", "gridcell");
+
+        const theme = getHeatmapColor(val);
+        td.style.backgroundColor = theme.bg;
+        td.style.color = theme.text;
+        td.style.borderColor = theme.border;
+
+        const isWinner = row.winnerCol === colIdx;
+        const isBestInMatrix = val === bestVal;
+
+        if (isWinner) {
+          td.classList.add("is-winner-highlight");
+        }
+
+        const valSpan = document.createElement("span");
+        valSpan.className = "hm-strip-val";
+        valSpan.textContent = `${val.toFixed(1)}%`;
+        td.appendChild(valSpan);
+
+        if (isWinner) {
+          const tag = document.createElement("span");
+          tag.className = "hm-strip-tag tag-winner";
+          tag.textContent = "★ Selected";
+          td.appendChild(tag);
+        } else if (isBestInMatrix) {
+          const tag = document.createElement("span");
+          tag.className = "hm-strip-tag tag-best";
+          tag.textContent = "Best";
+          td.appendChild(tag);
+        }
+
+        const tipContent = `
+          <div class="tooltip-heading"><strong>${row.fullName || row.name}</strong></div>
+          <div class="tooltip-sub">Strategy: <strong>${hm.columns[colIdx]}</strong></div>
+          <div class="tooltip-row" style="margin-top: 6px;">
+            <span>${hm.metricName}:</span>
+            <strong style="color: ${theme.text}">${val.toFixed(1)}% MAPE</strong>
+          </div>
+          ${row.tooltips?.[colIdx] ? `<div class="tooltip-note" style="margin-top: 6px; font-size: 0.78rem; color: #555;">${row.tooltips[colIdx]}</div>` : ""}
+        `;
+
+        function onHover() {
+          const r = td.getBoundingClientRect();
+          showTooltip(tipContent, r.left + r.width / 2, r.top);
+        }
+
+        td.addEventListener("mouseenter", onHover);
+        td.addEventListener("mouseleave", hideTooltip);
+        td.addEventListener("focus", onHover);
+        td.addEventListener("blur", hideTooltip);
+
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    matrixWrap.appendChild(table);
+    section.appendChild(matrixWrap);
+    return section;
+  }
+
+  function renderContent() {
+    bodyContainer.innerHTML = "";
+    if (activeTab === "all") {
+      heatmaps.forEach((hm) => {
+        bodyContainer.appendChild(createMatrixStrip(hm));
+      });
+    } else {
+      const target = heatmaps.find((hm) => hm.id === activeTab) || heatmaps[0];
+      bodyContainer.appendChild(createMatrixStrip(target));
+    }
+  }
+
+  renderContent();
+  container.appendChild(dashboard);
 }

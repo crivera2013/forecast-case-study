@@ -12,6 +12,7 @@ import {
   lineChart,
   barChart,
   enhanceTable,
+  heatmapGrid,
 } from "./charts.js";
 
 const DATA_DIR = "data/";
@@ -70,10 +71,21 @@ function initSlideDeck() {
   const counter = document.getElementById("deck-counter");
   const prevBtn = document.getElementById("deck-prev");
   const nextBtn = document.getElementById("deck-next");
-  const modeBtn = document.getElementById("btn-mode-toggle");
   const fullscreenBtn = document.getElementById("btn-fullscreen");
   const navLinks = Array.from(document.querySelectorAll("#nav-menu a"));
 
+  navLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href");
+      if (href && href.startsWith("#slide-")) {
+        const slideIdx = parseInt(href.replace("#slide-", ""), 10) - 1;
+        if (!isNaN(slideIdx) && slideIdx >= 0 && slideIdx < slides.length) {
+          e.preventDefault();
+          goToSlide(slideIdx);
+        }
+      }
+    });
+  });
   let currentSlideIdx = 0;
   let isSlideshowMode = false;
 
@@ -150,22 +162,6 @@ function initSlideDeck() {
   );
   slides.forEach((s) => observer.observe(s));
 
-  // Mode Toggle (Slideshow vs Document View)
-  modeBtn?.addEventListener("click", () => {
-    isSlideshowMode = !isSlideshowMode;
-    document.body.classList.toggle("mode-slideshow", isSlideshowMode);
-    modeBtn.setAttribute("aria-pressed", isSlideshowMode ? "true" : "false");
-    const modeIcon = document.getElementById("mode-icon");
-    const modeText = document.getElementById("mode-text");
-    if (isSlideshowMode) {
-      if (modeIcon) modeIcon.textContent = "📄";
-      if (modeText) modeText.textContent = "Doc View";
-      goToSlide(currentSlideIdx);
-    } else {
-      if (modeIcon) modeIcon.textContent = "📽️";
-      if (modeText) modeText.textContent = "Deck View";
-    }
-  });
 
   // Fullscreen toggle
   fullscreenBtn?.addEventListener("click", () => {
@@ -207,15 +203,18 @@ async function main() {
       series: [
         {
           label: "Monthly Pothole Complaints",
-          className: "series-actual",
+          className: "series-forecast",
+          area: true,
           values: history.map((r) => ({ x: r.ds, y: num(r.y) })),
         },
       ],
       events: [
         { x: "2015-02-01", label: "2015 Snowstorms" },
-        { x: "2026-03-01", label: "Mar 2026 Peak (25,171)" },
+        { x: "2026-03-01", label: "Mar 2026 Peak" },
       ],
       showPoints: false,
+      areaFill: true,
+      height: 240,
     });
 
     // ── 3. 9-Month Forecast Chart & Table with 2015 Snow Benchmark ──
@@ -230,10 +229,11 @@ async function main() {
 
     lineChart(document.getElementById("forecast-chart"), {
       title: "9-Month Complaints Forecast with 95% Confidence Bounds",
-      yLabel: "Projected # of Complaints",
+      yLabel: "Projected # Complaints",
+      yTicks: [0, 4000, 8000, 12000, 16000],
       series: [
         {
-          label: "Primary Forecast (B · Multiplicative)",
+          label: "2026-2027 Forecasted Values",
           className: "series-forecast",
           values: bestForecast.map((r) => ({ x: r.ds, y: num(r.yhat) })),
           band: {
@@ -242,54 +242,15 @@ async function main() {
           },
         },
         {
-          label: "Event-Aware Alt (A · Additive+Regressors)",
-          className: "series-alt",
-          values: testForecast.map((r) => ({ x: r.ds, y: num(r.yhat) })),
-        },
-        {
-          label: "2015 Post-Snow Benchmark (Actuals)",
+          label: "2015 Actuals",
           className: "series-benchmark",
           values: bestForecast.map((r, i) => ({ x: r.ds, y: benchmark2015Values[i] })),
         },
       ],
-      showPoints: true,
       exactXTicks: true,
+      height: 240,
     });
 
-    const seasonalContext = [
-      "Summer baseline (~2.8k)",
-      "Summer trough (~2.4k)",
-      "Autumn baseline (~2.6k)",
-      "Pre-winter low (~2.2k)",
-      "Winter onset (~3.0k)",
-      "Winter surge ramp (~3.9k)",
-      "Late winter ramp (~5.1k)",
-      "ANNUAL PEAK (10.8k; +270%)",
-      "Spring thaw (~5.8k)",
-    ];
-
-    // March 2027 is at index 7 in the 9-month forecast (Aug 2026 - Apr 2027)
-    const MARCH_2027_INDEX = 7;
-
-    populateTable(
-      "forecast-table",
-      bestForecast.map((r, i) => {
-        const yhatVal = num(r.yhat);
-        const altVal = i < testForecast.length ? num(testForecast[i].yhat) : null;
-        const bmarkVal = benchmark2015Values[i];
-        return {
-          isWinner: i === MARCH_2027_INDEX, // Highlight March peak
-          cells: [
-            { text: monthLabel(r.ds, true), sortValue: r.ds },
-            { text: formatNum(yhatVal), sortValue: yhatVal },
-            { text: altVal ? formatNum(altVal) : "—", sortValue: altVal || 0 },
-            { text: bmarkVal ? formatNum(bmarkVal) : "—", sortValue: bmarkVal || 0 },
-            { text: seasonalContext[i] || "Standard baseline", align: "left" },
-          ],
-        };
-      })
-    );
-    enhanceTable("forecast-table");
     // ── 4. Seasonality Chart ──
     const monthlyTotals = Array.from({ length: 12 }, () => ({ sum: 0, count: 0 }));
     for (const r of seasonality) {
@@ -331,71 +292,128 @@ async function main() {
       items: seasonalItems,
       xLabel: "Multiplicative Seasonal Component (0 = Baseline)",
       valueFormat: (v) => (v > 0 ? `+${v.toFixed(2)}` : v.toFixed(2)),
+      height: 230,
     });
 
-    // ── 5. Model Selection Chart & Table ──
-    // Model selection constants
-    const WINNING_MODEL_MAPE = 11.4;
-    const WINNING_MODEL_DESCRIPTION = 'Linear + Multiplicative';
-
-    // Mapping of verbose model configuration names to short labels
-    const MODEL_LABEL_MAP = {
-      'B (multiplicative) | cp=': 'B · ',
-      'A (additive-smooth) | cp=': 'A · ',
-      'C (additive-flex) | cp=': 'C · ',
-      'D (flat-trend) | cp=': 'D · ',
-      'auto-flexible+regressors': 'flex+reg',
-      'events+regressors': 'event+reg',
-      'auto-flexible': 'flexible',
-      'regressors': 'regress',
-    };
-
-    /**
-     * Convert verbose model configuration name to short label for display.
-     * Replaces known patterns with shorter, more readable labels.
-     */
-    const shortConfigName = (s) => {
-      let result = s;
-      for (const [pattern, replacement] of Object.entries(MODEL_LABEL_MAP)) {
-        result = result.replace(new RegExp(pattern, 'g'), replacement);
-      }
-      return result;
-    };
-
-    barChart(document.getElementById("models-chart"), {
-      title: "Top Model Configurations by Validation MAPE",
-      items: modelsComparison.map((r, i) => ({
-        label: shortConfigName(r.full),
-        fullLabel: r.full,
-        value: num(r.avg) || 0,
-        highlight: i === 0,
-        note: i === 0 ? `Validation Winner: ${WINNING_MODEL_MAPE}% Avg MAPE (${WINNING_MODEL_DESCRIPTION})` : undefined,
-      })),
-      xLabel: "Average Validation MAPE % (Lower is Better)",
-      valueFormat: (v) => `${v.toFixed(1)}%`,
-      angledLabels: true,
-      pad: { bottom: 68 },
-    });
-
-    populateTable(
-      "models-table",
-      modelsComparison.map((r, i) => ({
-        isWinner: i === 0,
-        cells: [
+    // ── 5. Model Selection Heatmaps ──
+    const heatmapsData = [
+      {
+        id: "val2",
+        title: "1. Validation 2 (Recent Rolling Window)",
+        subtitle: "Aug 2024 – Jan 2025 · 6 Months · Tests baseline calibration on recent normal conditions",
+        badge: "Rolling Test",
+        badgeClass: "badge-turquoise",
+        metricName: "Val 2 MAPE",
+        columns: ["None", "Auto", "Events", "Regressors", "Auto + Reg", "Events + Reg"],
+        rows: [
           {
-            html: `${r.full} ${i === 0 ? '<span class="tag-winner">Winner</span>' : ""}`,
-            sortValue: r.full,
-            align: "left",
+            name: "Linear",
+            fullName: "Linear (Additive-Smooth)",
+            values: [26.0, 17.6, 13.4, 14.9, 12.4, 9.5],
+            tooltips: [
+              "Linear | None: 26.0% MAPE (Underperforms without event regressors)",
+              "Linear | Auto: 17.6% MAPE (Automated changepoints)",
+              "Linear | Events: 13.4% MAPE (Explicit 2015 & 2020 changepoints)",
+              "Linear | Regressors: 14.9% MAPE (Historical event regressors)",
+              "Linear | Auto + Reg: 12.4% MAPE (Auto changepoints + regressors)",
+              "Linear | Events + Reg: 9.5% MAPE (Best linear short-term fit)",
+            ],
           },
-          { text: formatPercent(r.val1), sortValue: num(r.val1) },
-          { text: formatPercent(r.val2), sortValue: num(r.val2) },
-          { text: formatPercent(r.avg), sortValue: num(r.avg) },
-          { text: formatPercent(r.cv), sortValue: num(r.cv) },
-          { text: formatPercent(r.test), sortValue: num(r.test) },
+          {
+            name: "Multiplicative",
+            fullName: "Multiplicative (Selection Winner)",
+            values: [16.8, 9.6, 11.6, 11.4, 9.6, 13.0],
+            winnerCol: 0,
+            tooltips: [
+              "Multiplicative | None: 16.8% MAPE (Selection Winner · 11.4% Avg Val MAPE across windows)",
+              "Multiplicative | Auto: 9.6% MAPE (Tied best short-term fit)",
+              "Multiplicative | Events: 11.6% MAPE (Explicit event structural breaks)",
+              "Multiplicative | Regressors: 11.4% MAPE (Event regressors)",
+              "Multiplicative | Auto + Reg: 9.6% MAPE (Tied best short-term fit)",
+              "Multiplicative | Events + Reg: 13.0% MAPE (Event changepoints + regressors)",
+            ],
+          },
         ],
-      }))
-    );
-    enhanceTable("models-table", { defaultSortCol: 3, defaultSortAsc: true });
+      },
+      {
+        id: "cv",
+        title: "2. Cross-Validation (14 Historical Folds)",
+        subtitle: "14 Expanding-Window Folds (2009–2025) · Tests long-term generalization across 16 years",
+        badge: "16-Year Generalization",
+        badgeClass: "badge-blue",
+        metricName: "Cross-Validation MAPE",
+        columns: ["None", "Auto", "Events", "Regressors", "Auto + Reg", "Events + Reg"],
+        rows: [
+          {
+            name: "Linear",
+            fullName: "Linear (Additive-Smooth)",
+            values: [26.9, 26.6, 25.9, 40.1, 41.8, 35.9],
+            tooltips: [
+              "Linear | None: 26.9% MAPE",
+              "Linear | Auto: 26.6% MAPE",
+              "Linear | Events: 25.9% MAPE",
+              "Linear | Regressors: 40.1% MAPE (High CV variance from regressor overfitting)",
+              "Linear | Auto + Reg: 41.8% MAPE (Highest CV error in dataset)",
+              "Linear | Events + Reg: 35.9% MAPE",
+            ],
+          },
+          {
+            name: "Multiplicative",
+            fullName: "Multiplicative (Selection Winner)",
+            values: [21.7, 19.7, 18.7, 31.3, 32.3, 31.6],
+            winnerCol: 0,
+            tooltips: [
+              "Multiplicative | None: 21.7% MAPE (Selected Model · Robust across 14 historical folds)",
+              "Multiplicative | Auto: 19.7% MAPE (Solid generalization)",
+              "Multiplicative | Events: 18.7% MAPE (Lowest historical CV error)",
+              "Multiplicative | Regressors: 31.3% MAPE (Overfitting penalty on earlier years)",
+              "Multiplicative | Auto + Reg: 32.3% MAPE",
+              "Multiplicative | Events + Reg: 31.6% MAPE",
+            ],
+          },
+        ],
+      },
+      {
+        id: "test",
+        title: "3. Real-World Test (Held-Out 2025–2026)",
+        subtitle: "Aug 2025 – Jul 2026 · Includes record-breaking March 2026 extreme winter shock",
+        badge: "Held-Out Stress Test",
+        badgeClass: "badge-yellow",
+        metricName: "Test MAPE",
+        columns: ["None", "Auto", "Events", "Regressors", "Auto + Reg", "Events + Reg"],
+        rows: [
+          {
+            name: "Linear",
+            fullName: "Linear (Additive-Smooth)",
+            values: [37.6, 36.2, 33.5, 27.4, 23.3, 25.6],
+            tooltips: [
+              "Linear | None: 37.6% MAPE (Struggles on summer trough and winter shock)",
+              "Linear | Auto: 36.2% MAPE",
+              "Linear | Events: 33.5% MAPE",
+              "Linear | Regressors: 27.4% MAPE",
+              "Linear | Auto + Reg: 23.3% MAPE (Lowest test error on outlier year)",
+              "Linear | Events + Reg: 25.6% MAPE",
+            ],
+          },
+          {
+            name: "Multiplicative",
+            fullName: "Multiplicative (Selection Winner)",
+            values: [33.9, 32.4, 27.2, 28.2, 26.2, 24.5],
+            winnerCol: 0,
+            tooltips: [
+              "Multiplicative | None: 33.9% MAPE (Selected Model · 66.1% accuracy with outlier)",
+              "Multiplicative | Auto: 32.4% MAPE",
+              "Multiplicative | Events: 27.2% MAPE",
+              "Multiplicative | Regressors: 28.2% MAPE",
+              "Multiplicative | Auto + Reg: 26.2% MAPE",
+              "Multiplicative | Events + Reg: 24.5% MAPE (Best multiplicative test fit)",
+            ],
+          },
+        ],
+      },
+    ];
+
+    heatmapGrid(document.getElementById("model-heatmaps-dashboard") || document.getElementById("model-heatmaps-container"), heatmapsData);
 
     // ── 6. Test Period Evaluation Chart & Table ──
     lineChart(document.getElementById("validation-chart"), {
@@ -407,38 +425,16 @@ async function main() {
           values: evalData.map((r) => ({ x: r.ds, y: num(r.y) })),
         },
         {
-          label: "Baseline Forecast (B · Multiplicative)",
+          label: "Model Forecast",
           className: "series-pred",
           values: evalData.map((r) => ({ x: r.ds, y: num(r.yhat) })),
         },
       ],
-      events: [{ x: "2026-03-01", label: "March 2026 Outlier (25,171)" }],
-      showPoints: true,
+      events: [{ x: "2026-03-01", label: "March 2026 Outlier" }],
       exactXTicks: true,
+      height: 300,
     });
 
-    populateTable(
-      "validation-table",
-      evalData.map((r) => {
-        const act = num(r.y);
-        const pred = num(r.yhat);
-        const diff = act - pred;
-        const isPos = diff >= 0;
-        return {
-          isWinner: normalizeDateMonth(r.ds) === "2026-03",
-          cells: [
-            { text: monthLabel(r.ds, true), sortValue: r.ds },
-            { text: formatNum(act), sortValue: act },
-            { text: formatNum(pred), sortValue: pred },
-            {
-              html: `<span class="${isPos ? "tag-delta-pos" : "tag-delta-neg"}">${isPos ? "+" : "−"}${formatNum(Math.abs(diff))}</span>`,
-              sortValue: diff,
-            },
-          ],
-        };
-      })
-    );
-    enhanceTable("validation-table");
 
     // ── 7. Initialize Slide Deck Navigation ──
     initSlideDeck();

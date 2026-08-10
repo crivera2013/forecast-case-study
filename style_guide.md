@@ -58,3 +58,28 @@ Colors are denoted with a name and their hex code
 10. Azure - 0071de
 
 10%, 25%, 50%, and 75% tint variants of these are allowed
+
+### Using color in data visualizations
+
+in most cases lead with bright turqoise.
+
+Below are the different color combos:
+
+- 2 color combos:
+  - bright turqoise, dark turqoise
+  - bright turqoise, dark yellow
+  - bright turqoise, black 58%
+- 3 color combos:
+  - bright turqoise, dark turqoise, dark yellow
+  - bright turqoise, dark turqoise, black 58%
+  - bright turqoise, dark turqoise, azure
+- 4 color combos:
+  - bright turqoise, dark turqoise, dark yellow, azure
+  - bright turqoise, dark turqoise, dark yellow, black 58%
+- 5 color combos:
+  - bright turqoise, dark turqoise, dark yellow, azure, cobalt
+  - bright turqoise, dark turqoise, dark yellow, black 58%, azure
+- 6 color combos:
+  - bright turqoise, dark turqoise, dark yellow, black 58%, azure, cobalt
+  - bright turqoise, dark turqoise, dark yellow, dark red, black 58%, azure
+  -

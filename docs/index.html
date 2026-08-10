@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260820">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -21,18 +21,24 @@
       <div class="header-controls">
         <ul class="nav-list" id="nav-menu">
           <li><a href="#slide-1" class="is-active">Summary</a></li>
-          <li><a href="#slide-2">9-Mo Forecast</a></li>
-          <li><a href="#slide-3">History</a></li>
-          <li><a href="#slide-4">Seasonality</a></li>
-          <li><a href="#slide-5">Model Selection</a></li>
-          <li><a href="#slide-6">Stress Test</a></li>
-          <li><a href="#slide-7">Methodology</a></li>
-          <li><a href="#slide-8">Roadmap</a></li>
+          <li><a href="#slide-2">Forecast</a></li>
+          <li class="nav-dropdown">
+            <span class="nav-dropdown-trigger">Insights</span>
+            <ul class="nav-dropdown-menu">
+              <li><a href="#slide-3">History</a></li>
+              <li><a href="#slide-4">Seasonality</a></li>
+              <li><a href="#slide-5">Stress Test</a></li>
+            </ul>
+          </li>
+          <li class="nav-dropdown">
+            <span class="nav-dropdown-trigger">Appendix</span>
+            <ul class="nav-dropdown-menu">
+              <li><a href="#slide-6">Model Selection</a></li>
+              <li><a href="#slide-7">Methodology</a></li>
+              <li><a href="#slide-8">Next Steps</a></li>
+            </ul>
+          </li>
         </ul>
-        <button type="button" class="btn-mode-toggle" id="btn-mode-toggle" aria-pressed="false" title="Toggle between Slideshow Mode and Document View">
-          <span id="mode-icon">📽️</span>
-          <span id="mode-text">Deck View</span>
-        </button>
         <button type="button" class="btn-fullscreen" id="btn-fullscreen" title="Toggle Fullscreen Presentation Mode">
           <span>⛶</span>
         </button>
@@ -44,31 +50,26 @@
     <!-- ─── Slide 1: Executive Summary & High-Level Results ──────────────── -->
     <section class="slide slide-hero" id="slide-1" aria-labelledby="title-slide-1">
       <div class="hero-content">
-        <div class="hero-tag">Executive Briefing | Winter 2026-27 Resource Planning</div>
-        <h1 id="title-slide-1">Resource Planning Forecast: NYC Pothole Demand</h1>
-        <p class="hero-claim"><strong>What this report provides:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)
-        <p class="hero-claim" style="font-size: 1.05rem; margin-top: -1.2rem; color: var(--ink-67);"><strong>Purpose:</strong> Enable DOT to proactively assemble crews, materials, and budget to handle recurring pothole maintenance</p>
+        <h1 id="title-slide-1">Resource Planning Forecast: NYC Pothole Maintenance Demand</h1>
+        <p class="hero-claim"><strong>Purpose:</strong> Enable DOT to proactively assemble crews, materials, and budget to handle recurring pothole maintenance</p>
+        <p class="hero-claim" style="margin-top: -0.8rem; color: var(--ink-67);"><strong>What this report provides:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
         
         <div class="hero-metrics-grid" aria-label="Executive KPI Metrics" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-          <article class="metric-card accent-turquoise">
-            <span class="metric-title">Projected (Aug '26)</span>
-            <span class="metric-value" id="kpi-aug-val">2,758</span>
-            <p class="metric-desc">Typical summer demand—<strong>manageable with current staffing</strong></p>
-          </article>
-          <article class="metric-card accent-red">
-            <span class="metric-title">Projected Peak (Mar '27)</span>
-            <span class="metric-value" id="kpi-mar-val">10,810</span>
-            <p class="metric-desc">Expecting <strong>~2x more</strong> than typical from 2020-2025</p>
-          </article>
           <article class="metric-card accent-yellow">
-            <span class="metric-title">2026 Extreme Snowfall</span>
+            <span class="metric-title">Extreme Snowfall (Mar '26)</span>
             <span class="metric-value" id="kpi-outlier-val">25,171</span>
             <p class="metric-desc">5x more complaints than usual; still responsible for current elevated levels</p>
           </article>
-        </div>
-        <div class="hero-cta-group">
-          <a class="btn btn-primary" href="#slide-2">See the Resource Demand Forecast →</a>
-          <a class="btn btn-secondary" href="#slide-5">Understand Our Methodology</a>
+          <article class="metric-card accent-turquoise">
+            <span class="metric-title">Projected (August '26)</span>
+            <span class="metric-value" id="kpi-aug-val">2,685</span>
+            <p class="metric-desc">Typical summer demand&mdash;<strong>manageable with current staffing</strong></p>
+          </article>
+          <article class="metric-card accent-red">
+            <span class="metric-title">Projected Peak (Mar '27)</span>
+            <span class="metric-value" id="kpi-mar-val">10,921</span>
+            <p class="metric-desc">Expecting <strong>~2x more</strong> than typical from 2020-2025</p>
+          </article>
         </div>
       </div>
     </section>
@@ -76,54 +77,33 @@
     <!-- ─── Slide 2: 9-Month Complaints Forecast ────────────────────────── -->
     <section class="slide" id="slide-2" aria-labelledby="title-slide-2">
       <div class="slide-header">
-        <span class="slide-tag">Slide 2 | Resource Demand Forecast</span>
         <h2 id="title-slide-2">9-Month Resource Demand Forecast (Aug 2026 – Apr 2027)</h2>
-        <p class="lead">Through autumn, expect normal demand (~2.2k–2.8k complaints/month). Complaints will surge to 10,810 by March 2027 (270% increase). We validate this forecast against the 2015 snow event and an event-aware model to ensure accuracy.</p>
+        <p class="lead">Through autumn, expect normal demand (~2.2k–2.8k/month). Complaints will surge to 10,921 by March 2027 (~4x the autumn baseline). The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
       </div>
 
       <div class="chart-container">
         <div class="chart-header">
-          <span class="chart-title">Monthly Resource Demand with 95% Confidence Bounds</span>
-          <span class="footnote">Click legend to toggle models. Hover for exact projections.</span>
+          <span class="chart-title">Monthly Complaint Projections with 95% Confidence Bounds</span>
         </div>
         <div id="forecast-chart" class="chart-figure"></div>
       </div>
 
-      <div class="table-container">
-        <div class="table-scroll">
-          <table class="data-table" id="forecast-table" aria-label="9-Month Resource Demand Forecast">
-            <thead>
-              <tr>
-                <th scope="col">Month</th>
-                <th scope="col">Primary Forecast</th>
-                <th scope="col">Weather-Adjusted</th>
-                <th scope="col">2015 Benchmark</th>
-                <th scope="col">Seasonal Context</th>
-              </tr>
-            </thead>
-            <tbody><!-- Populated dynamically via JS --></tbody>
-          </table>
-        </div>
-      </div>
 
       <div class="decision-box">
-        <h4>Recommendation for Leadership</h4>
-        <p><strong>Action Required:</strong> Given 2026's record snowfall, Aug–Nov complaint volumes will likely exceed baseline forecasts. Operations must immediately scale capacity to the <strong>upper forecast range (Event-Aware model)</strong> and have contingency crews on standby. <strong>Time to act is now.</strong></p>
+        <h4>Analyst Recommendation for Leadership</h4>
+        <p><strong>Action Required:</strong> Given 2026's record snowfall, complaint volumes will likely exceed baseline forecasts. Operations should scale capacity closer to the upper forecast range. The model provides conservative estimates as it requires more data points to better evaluate the anomalous 2026 snowfall</p>
       </div>
     </section>
 
     <!-- ─── Slide 3: Historical Baseline ─────────────────────────────────── -->
     <section class="slide" id="slide-3" aria-labelledby="title-slide-3">
       <div class="slide-header">
-        <span class="slide-tag">Slide 3 | Historical Patterns</span>
-        <h2 id="title-slide-3">16 Years of Data: Understanding NYC's Pothole Cycles (2009–2026)</h2>
-        <p class="lead">Over 16 years, NYC received <strong>991,071 pothole complaints</strong> (avg: ~4,955/month). The data reveals a clear pattern: predictable winter surges driven by freeze-thaw cycles, with rare weather shocks causing spikes. This history is our forecasting foundation.</p>
+        <h2 id="title-slide-3">Understanding NYC's Pothole Cycles (2009–2026)</h2>
       </div>
 
       <div class="chart-container">
         <div class="chart-header">
           <span class="chart-title">NYC 311 Monthly Pothole Complaints History (Dec 2009 – Jul 2026)</span>
-          <span class="footnote">Hover to inspect monthly counts and historical events that shaped demand.</span>
         </div>
         <div id="history-chart" class="chart-figure"></div>
       </div>
@@ -131,35 +111,23 @@
       <div class="executive-insights-grid">
         <div class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-blue">1</span>
-            <h4>Total Volume</h4>
+            <span class="exec-icon exec-icon-yellow">1</span>
+            <h4>2015 Winter Thaw</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>991,071 complaints across 200 months.</li>
-            <li>City-wide monthly average: ~4,955 complaints.</li>
-            <li><em>→ This volume justifies dedicated forecasting resources.</em></li>
+            <li>Shifted baseline complaint numbers upward by ~20%</li>
+            <li>Large winter events have multi-year lasting effects on road conditions</li>
           </ul>
         </div>
         <div class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-yellow">2</span>
-            <h4>2015 Snowstorms</h4>
+            <span class="exec-icon exec-icon-red">2</span>
+            <h4>2026 Winter Thaw</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>Severe polar vortex blizzards in Jan–Mar 2015.</li>
-            <li>Shifted baseline damage upward by ~20%.</li>
-            <li><em>→ Winter events have lasting effects on road conditions.</em></li>
-          </ul>
-        </div>
-        <div class="exec-card">
-          <div class="exec-card-header">
-            <span class="exec-icon exec-icon-red">3</span>
-            <h4>March 2026 Crisis</h4>
-          </div>
-          <ul class="snappy-bullets">
-            <li>All-time record of 25,171 complaints.</li>
-            <li>5.1× baseline extreme freeze-thaw anomaly.</li>
-            <li><em>→ Proof current capacity is insufficient for extreme weather.</em></li>
+            <li>All-time record of 25,171 complaints</li>
+            <li>5.1× baseline extreme freeze-thaw anomaly</li>
+            <li>Expect significantly elevated complaint volumes going forward</li>
           </ul>
         </div>
       </div>
@@ -168,9 +136,7 @@
     <!-- ─── Slide 4: Seasonality ─────────────────────────────────────────── -->
     <section class="slide" id="slide-4" aria-labelledby="title-slide-4">
       <div class="slide-header">
-        <span class="slide-tag">Slide 4 | The Science Behind the Forecast</span>
         <h2 id="title-slide-4">Why Winter Matters: The Freeze-Thaw Multiplier Effect</h2>
-        <p class="lead">Our model accounts for a critical insight: pothole complaints don't increase linearly—they <strong>multiply</strong>. Winter freeze-thaw cycles exponentially accelerate road damage, meaning small temperature swings can trigger massive complaint surges.</p>
       </div>
 
       <div class="chart-container">
@@ -188,20 +154,18 @@
             <h4>March: Peak Demand Period (+148%)</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>Annual peak in all 16 historical years—<em>highly predictable.</em></li>
-            <li>32°F (0°C) freeze-thaw cycling causes maximum pavement damage.</li>
-            <li><em>→ This predictable pattern allows pre-positioning of crews.</em></li>
+            <li>Annual peak in all 16 historical years—<em>highly predictable</em></li>
+            <li>This predictable pattern enables accurate forecasting</li>
           </ul>
         </article>
         <article class="exec-card">
           <div class="exec-card-header">
             <span class="exec-icon exec-icon-turquoise">↓</span>
-            <h4>November: Optimal Maintenance Window (-36%)</h4>
+            <h4>July-December: Minimal Complaints</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>Annual complaint trough across NYC.</li>
-            <li>Dry, stable autumn weather minimizes surface breaks.</li>
-            <li><em>→ Ideal time for proactive road repairs before winter.</em></li>
+            <li>Annual complaint trough across NYC</li>
+            <li>Dry, warm summer and autumn weather minimizes surface breaks</li>
           </ul>
         </article>
         <article class="exec-card">
@@ -210,184 +174,520 @@
             <h4>Methodology: Multiplicative Scaling</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>Surges scale proportionally with baseline (+50% to +150%).</li>
-            <li>Multiplicative model prevents summer overprediction.</li>
-            <li><em>→ Rigorously tested: this approach outperforms linear models.</em></li>
+            <li>Surges scale proportionally with baseline (+50% to +150%)</li>
+            <li>Multiplicative model prevents summer overprediction</li>
           </ul>
         </article>
       </div>
     </section>
 
-    <!-- ─── Slide 5: Model Selection ─────────────────────────────────────── -->
+    <!-- ─── Slide 5: Outlier Stress-Testing ──────────────────────────────── -->
     <section class="slide" id="slide-5" aria-labelledby="title-slide-5">
       <div class="slide-header">
-        <span class="slide-tag">Slide 5 | Validation & Rigor</span>
-        <h2 id="title-slide-5">Rigorous Model Selection: Why We Trust the Forecast</h2>
-        <p class="lead">We didn't guess—we tested. <strong>28 different forecasting configurations</strong> were evaluated against historical data. The winning model, which accounts for seasonal spikes with steady growth, achieved <strong>88.6% accuracy</strong> (11.4% error rate).</p>
-      </div>
-
-      <div class="mape-callout">
-        <strong>What is MAPE?</strong> Mean Absolute Percentage Error measures forecast accuracy. Think of it as our accuracy score: <strong>11.4% error = 88.6% accuracy</strong>. In practical terms, our predictions are typically within ~1,000 complaints of the actual number.
+        <h2 id="title-slide-5">Stress Test: How the Model Handles Extreme Weather</h2>
+        <p class="lead">March 2026 was a record: <strong>25,171 actual complaints</strong> vs. our predicted <strong>6,807</strong>. This extreme weather event tested our model's limits. Result: even including this outlier, our forecast maintained <strong>72.8% accuracy</strong> (27.2% error)</p>
       </div>
 
       <div class="chart-container">
         <div class="chart-header">
-          <span class="chart-title">Model Performance: 28 Configurations Tested</span>
-          <span class="footnote">All configurations rigorously validated against historical data. Winner (highlighted) achieved 88.6% accuracy.</span>
+          <span class="chart-title">Actual vs. model predictions. (Aug 2025 – Jul 2026)</span>
         </div>
-        <div id="models-chart" class="chart-figure"></div>
-      </div>
-
-      <div class="table-container">
-        <div class="table-scroll">
-          <table class="data-table" id="models-table" aria-label="Model Performance Comparison - Full Validation Results">
-            <thead>
-              <tr>
-                <th scope="col">Configuration</th>
-                <th scope="col">Validation 1</th>
-                <th scope="col">Validation 2</th>
-                <th scope="col">Avg Accuracy</th>
-                <th scope="col">Cross-Validation</th>
-                <th scope="col">Real-World Test</th>
-              </tr>
-            </thead>
-            <tbody><!-- Populated dynamically via JS --></tbody>
-          </table>
-        </div>
+        <div id="validation-chart" class="chart-figure"></div>
       </div>
     </section>
 
-    <!-- ─── Slide 6: Outlier Stress-Testing ──────────────────────────────── -->
+    <!-- ─── Slide 6: Model Selection ─────────────────────────────────────── -->
     <section class="slide" id="slide-6" aria-labelledby="title-slide-6">
       <div class="slide-header">
-        <span class="slide-tag">Slide 6 | Stress Testing</span>
-        <h2 id="title-slide-6">Stress Test: How the Model Handles Extreme Weather</h2>
-        <p class="lead">March 2026 delivered a wake-up call: <strong>25,171 actual complaints</strong> vs. our predicted <strong>7,036</strong>. This extreme weather event tested our model's limits. Result: even including this outlier, our forecast maintained <strong>66.1% accuracy</strong> (33.9% error), proving it can identify high-risk periods and give us time to prepare.</p>
+        <h2 id="title-slide-6">Rigorous Model Selection: Validation Matrix</h2>
+        <p class="lead">Comparing 4 trend configurations (A&ndash;D) across 7 changepoint strategies on held-out test data (Aug 2025 &ndash; Jul 2026). Multiplicative seasonality with explicit event changepoints achieves the best CV generalization (18.7% MAPE).</p>
       </div>
+      <div class="heatmap-dashboard" id="model-heatmaps-dashboard">
 
-      <div class="split-layout">
-        <div class="chart-container">
-          <div class="chart-header">
-            <span class="chart-title">12-Month Real-World Validation (Aug 2025 – Jul 2026)</span>
-            <span class="footnote">Actual complaints vs. model predictions. March 2026 outlier included to stress-test robustness.</span>
-          </div>
-          <div id="validation-chart" class="chart-figure"></div>
-        </div>
-
-        <div class="table-container" style="margin: 0;">
-          <div class="table-scroll">
-            <table class="data-table" id="validation-table" aria-label="Real-World Test Results: Actual vs Predicted">
+        <div class="heatmap-body-container">
+          <div class="hm-mini-grid">
+          <div class="hm-mini-card">
+            <div class="hm-mini-header">
+              <span class="hm-mini-label">A</span>
+              <span class="hm-mini-desc">Additive Smooth</span>
+            </div>
+            <table class="hm-mini-table">
               <thead>
                 <tr>
-                  <th scope="col">Month</th>
-                  <th scope="col">Actual Complaints</th>
-                  <th scope="col">Predicted</th>
-                  <th scope="col">Difference</th>
+                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">CV</th>
+                  <th class="hm-mini-th">Test</th>
                 </tr>
               </thead>
-              <tbody><!-- Populated dynamically via JS --></tbody>
+              <tbody>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Events</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">25.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">33.5%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flex</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">26.5%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">33.5%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">26.6%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">36.2%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">None</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">26.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">37.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Evt+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">35.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">25.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">40.1%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">27.4%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">41.8%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">23.3%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flx+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">49.2%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">27.2%</span>
+                </td>
+              </tr>
+              </tbody>
             </table>
           </div>
+          <div class="hm-mini-card hm-mini-winner">
+            <div class="hm-mini-header">
+              <span class="hm-mini-label">B</span>
+              <span class="hm-mini-desc">Multiplicative</span>
+            </div>
+            <table class="hm-mini-table">
+              <thead>
+                <tr>
+                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">CV</th>
+                  <th class="hm-mini-th">Test</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row" class="hm-mini-strat is-winner-highlight">Events</th>
+                <td class="hm-strip-cell" style="background-color:#def5f0;color:#007873;border-color:#1ba39c;">
+                  <span class="hm-strip-val">18.7%</span>
+                <span class="hm-strip-tag tag-winner">★</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">27.2%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto</th>
+                <td class="hm-strip-cell" style="background-color:#def5f0;color:#007873;border-color:#1ba39c;">
+                  <span class="hm-strip-val">19.7%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">32.4%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">None</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">21.7%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">33.9%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flex</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">22.5%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">32.4%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">31.3%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">28.2%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Evt+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">31.6%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">24.5%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flx+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">32.2%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">24.4%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">32.3%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">26.2%</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hm-mini-card">
+            <div class="hm-mini-header">
+              <span class="hm-mini-label">C</span>
+              <span class="hm-mini-desc">Additive Flex</span>
+            </div>
+            <table class="hm-mini-table">
+              <thead>
+                <tr>
+                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">CV</th>
+                  <th class="hm-mini-th">Test</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row" class="hm-mini-strat">None</th>
+                <td class="hm-strip-cell" style="background-color:#e5f5ec;color:#1fa824;border-color:#8cd790;">
+                  <span class="hm-strip-val">26.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">37.5%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">32.3%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">39.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flx+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">32.7%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">39.7%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Evt+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">33.2%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">37.3%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">33.3%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">50.3%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Events</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">33.6%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">51.4%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flex</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">34.0%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">50.8%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">40.1%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">27.4%</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hm-mini-card">
+            <div class="hm-mini-header">
+              <span class="hm-mini-label">D</span>
+              <span class="hm-mini-desc">Flat Trend</span>
+            </div>
+            <table class="hm-mini-table">
+              <thead>
+                <tr>
+                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">CV</th>
+                  <th class="hm-mini-th">Test</th>
+                </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row" class="hm-mini-strat">None</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">34.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">28.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">34.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">28.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Events</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">34.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">28.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flex</th>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">34.9%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">28.6%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">43.4%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">30.1%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Evt+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">43.4%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">30.1%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Auto+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">43.4%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">30.1%</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" class="hm-mini-strat">Flx+Reg</th>
+                <td class="hm-strip-cell" style="background-color:#ffeded;color:#c20029;border-color:#660026;">
+                  <span class="hm-strip-val">43.4%</span>
+                </td>
+                <td class="hm-strip-cell" style="background-color:#fff7de;color:#bf8200;border-color:#ffad00;">
+                  <span class="hm-strip-val">30.1%</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
         </div>
-      <div class="decision-box">
-        <h4>Rigor Behind the Model: Outlier Handling</h4>
-        <ul class="snappy-bullets">
-          <li><strong>Validation:</strong> March 2026 confirmed as extreme weather anomaly, not data error—<em>our model correctly identified it as unusual.</em></li>
-          <li><strong>Accuracy Impact:</strong> Including the outlier: 66.1% accuracy (33.9% error). Excluding it: 69.6% accuracy (30.4% error).</li>
-          <li><strong>Decision:</strong> We retain the outlier to ensure we <strong>never underestimate severe winter risk</strong>—better to over-prepare than be overwhelmed.</li>
-        </ul>
+      </div>
+      <div class="executive-insights-grid" style="margin-top: 1.5rem;">
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-azure">1</span>
+            <h4>Cross-Validation (14 Historical Folds)</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li><strong>Selected Model (B multiplicative | events)</strong> wins at <strong>18.7% MAPE</strong></li>
+            <li>Adding regressors inflates CV error to &gt;31%–41% due to overfitting</li>
+            <li><em>→ Simpler model generalizes best across 16 years</em></li>
+          </ul>
+        </article>
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-yellow">2</span>
+            <h4>Real-World Test (2026 Winter Shock)</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li>Regressors help fit extreme shocks (24.4% vs 27.2% test MAPE)</li>
+            <li>However, the selected events model retains 72.8% accuracy without regressor overfitting</li>
+            <li><em>→ Robust performance during unprecedented weather</em></li>
+          </ul>
+        </article>
       </div>
     </section>
 
     <!-- ─── Slide 7: Methodology & Specifications ────────────────────────── -->
     <section class="slide" id="slide-7" aria-labelledby="title-slide-7">
       <div class="slide-header">
-        <span class="slide-tag">Slide 7 | Technical Methodology</span>
-        <h2 id="title-slide-7">The Rigor Behind Our Forecast: Data, Model, Validation</h2>
-        <p class="lead">Our production forecasting pipeline uses <strong>proven statistical methods</strong> to deliver reliable predictions. Here's the three-step process that ensures accuracy:</p>
-      </div>
-
-      <div class="roadmap-grid">
-        <div class="roadmap-card">
-          <h3>1. Data Preparation: Clean, Reliable Inputs</h3>
-          <ul class="roadmap-list">
-            <li><strong>Source:</strong> Official NYC 311 Service Requests Open Data.</li>
-            <li><strong>Filter:</strong> Focused on <code>Street Condition</code> / <code>Pothole</code> complaints only.</li>
-            <li><strong>Scope:</strong> 200 clean months of data (Dec 2009 – Jul 2026).</li>
-            <li><strong>Rigor:</strong> Removed partial/incomplete data to ensure quality.</li>
-          </ul>
-        </div>
-
-        <div class="roadmap-card">
-          <h3>2. Forecasting Model: Proven Statistical Methods</h3>
-          <ul class="roadmap-list">
-            <li><strong>Core:</strong> <code>Trend × (1 + Seasonality)</code> captures both growth and cycles.</li>
-            <li><strong>Trend Prior:</strong> <code>0.01</code> (conservative—prevents overfitting to noise).</li>
-            <li><strong>Seasonality Prior:</strong> <code>100.0</code> (strong—trusts the clear winter pattern).</li>
-            <li><strong>Confidence:</strong> 300 MCMC samples for robust 95% confidence intervals.</li>
-          </ul>
-        </div>
-
-        <div class="roadmap-card">
-          <h3>3. Validation: Multiple Layers of Testing</h3>
-          <ul class="roadmap-list">
-            <li><strong>Validation Window 1 (2023-24):</strong> 98.6% accuracy (6.0% MAPE).</li>
-            <li><strong>Validation Window 2 (2024-25):</strong> 83.2% accuracy (16.8% MAPE).</li>
-            <li><strong>Cross-Validation:</strong> 14 rolling folds across history (78.3% avg accuracy).</li>
-            <li><strong>Delivery:</strong> Pure static SVG—no server required, works everywhere.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ─── Slide 8: Roadmap & Limitations ───────────────────────────────── -->
-    <section class="slide" id="slide-8" aria-labelledby="title-slide-8">
-      <div class="slide-header">
-        <span class="slide-tag">Slide 8 | Future Enhancements</span>
-        <h2 id="title-slide-8">Making the Forecast Even More Powerful</h2>
-        <p class="lead">The current model is production-ready. To further improve accuracy and actionability for DOT leadership, we recommend these high-impact enhancements:</p>
+        <h2 id="title-slide-7">Methodology: Data Pipeline, Model Engine &amp; Validation</h2>
+        <p class="lead">The data pipeline, model engine, and validation protocol.</p>
       </div>
 
       <div class="executive-insights-grid">
-        <div class="exec-card">
-          <h4>1. Weather Regressors</h4>
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-turquoise">1</span>
+            <h4>Data Preparation</h4>
+          </div>
           <ul class="snappy-bullets">
-            <li>Integrate NOAA daily temperature, snowfall, and freeze-thaw cycles.</li>
-            <li><em>→ Enables real-time forecast adjustments as weather patterns emerge.</em></li>
+            <li><strong>Source:</strong> NYC 311 Service Requests, downloaded via the Socrata API</li>
+            <li><strong>Counted:</strong> Complaints matching <code>%POTHOLE%</code> in the descriptor field, plus <code>'Rough, Pitted or Cracked Roads'</code>, across Street, Highway, and Bridge Condition datasets (~918K total)</li>
+            <li><strong>Time range:</strong> 200 full months, Dec 2009 through Jul 2026 — Only the incomplete current month (Aug 2026) was dropped — The March 2026 spike and April 2020 dip were kept — they are real events, not data errors</li>
           </ul>
-        </div>
-        <div class="exec-card">
-          <h4>2. Borough Disaggregation</h4>
+        </article>
+
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-azure">2</span>
+            <h4>Model Engine: Facebook Prophet</h4>
+          </div>
           <ul class="snappy-bullets">
-            <li>Break down forecast by borough for localized planning.</li>
-            <li><em>→ Allows targeted crew and budget allocation by neighborhood.</em></li>
+            <li><strong>What it is:</strong> A Generalized Additive Model (GAM) that splits a time series into three parts:
+              <br><code>y(t) = trend(t) + seasonality(t) + events(t) + noise</code></li>
+            <li><strong>Trend:</strong> A straight line that can bend at changepoints — Bends are detected automatically, supplemented with two explicit breaks: the 2015 snowstorms and the 2020 pandemic</li>
+            <li><strong>Seasonality:</strong> A smooth yearly wave (Fourier series) that captures the March peak and summer trough without overfitting</li>
+            <li><strong>How it fits:</strong> Powered by <em>Stan</em>, a Bayesian inference engine — Full MCMC sampling (300 draws) is used so the confidence bands reflect real uncertainty — not just trend noise</li>
           </ul>
-        </div>
-        <div class="exec-card">
-          <h4>3. Budget Linkage</h4>
+        </article>
+
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-yellow">3</span>
+            <h4>Validation Protocol</h4>
+          </div>
           <ul class="snappy-bullets">
-            <li>Translate complaint forecasts to asphalt tonnage and labor hours.</li>
-            <li><em>→ Directly ties forecasts to budget planning and resource allocation.</em></li>
+            <li><strong>Held-out test:</strong> 72.8% accurate (27.2% MAPE) on 12 unseen months that include the record March 2026 winter</li>
+            <li><strong>14-fold cross-validation:</strong> 81.3% accurate (18.7% MAPE) across every year from 2009–2025 — The model generalizes</li>
+            <li><strong>32-config search:</strong> 4 trend types &times; 8 changepoint strategies were tested; the winner was selected by lowest CV error — no cherry-picking</li>
           </ul>
-        </div>
-        <div class="exec-card">
-          <h4>4. Automated Updates</h4>
+        </article>
+
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-red">4</span>
+            <h4>Key Terms</h4>
+          </div>
           <ul class="snappy-bullets">
-            <li>Automate monthly model retraining via GitHub Actions.</li>
-            <li><em>→ Ensures forecasts stay current without manual intervention.</em></li>
+            <li><strong>MAPE</strong> = Mean Absolute Percentage Error — How far off predictions are, on average, as a percentage. 18.7% MAPE = off by 18.7% — Lower is better</li>
+            <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend — Some are automatic; the 2015 and 2020 ones were set by hand</li>
+            <li><strong>Regressors:</strong> Extra on/off flags for known event windows (e.g., <code>snowstorm_2015</code> = 1 for Jan–Mar 2015) — They let the model handle big shocks without warping the trend</li>
           </ul>
-        </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ─── Slide 8: Future Directions ───────────────────────────────────── -->
+    <section class="slide" id="slide-8" aria-labelledby="title-slide-8">
+      <div class="slide-header">
+        <h2 id="title-slide-8">Next Steps</h2>
+        <p class="lead">Prophet is a strong baseline, but pothole formation is driven by weather. Better inputs, better models, and broader scope are the natural next steps.</p>
       </div>
 
-      <div class="decision-box">
-        <h4>Data Sources &amp; Technical Details</h4>
-        <p>
-          <strong>Data:</strong> Official <a href="https://data.cityofnewyork.us/Social-Services/311-Service-Requests/erm2-nwe9" target="_blank" rel="noopener">NYC 311 Service Requests Open Data</a> — ensuring accuracy and transparency. <strong>Code:</strong> Full implementation available at <a href="https://github.com/crivera2013/forecast-case-study" target="_blank" rel="noopener">github.com/crivera2013/forecast-case-study</a>.
-        </p>
+      <div class="executive-insights-grid">
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-turquoise">1</span>
+            <h4>New Data Inputs</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li><strong>Weather:</strong> Snowfall, rainfall, and freeze-thaw cycles are the direct physical drivers of pothole formation — Integrating NOAA daily temperature, precipitation, and snow-depth data as regressors would let the forecast respond to conditions in real time, rather than relying on seasonal averages</li>
+            <li><strong>Cave-in complaints:</strong> Cave-ins share the same root cause as potholes — freeze-thaw cycles weaken pavement from below — The physics does not distinguish between complaint categories — ~168K cave-in records exist in the 311 dataset — Though handled by a different department, including them would give a more complete picture of freeze-thaw damage across NYC infrastructure</li>
+          </ul>
+        </article>
+
+        <article class="exec-card">
+          <div class="exec-card-header">
+            <span class="exec-icon exec-icon-azure">2</span>
+            <h4>Alternative Model Architectures</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li><strong>Gradient-boosted trees</strong> (XGBoost, LightGBM, CatBoost) can capture non-linear interactions between weather and complaint history that an additive GAM cannot express</li>
+            <li><strong>Foundation forecasters</strong> (AWS Chronos, Google TimesFM) treat time-series prediction as a language-modeling problem — Zero-shot — no per-series training needed</li>
+            <li><strong>Reinforcement learning</strong> could optimize the sequential crew-allocation and resource-deployment problem week-to-week under evolving forecast uncertainty</li>
+            <li><strong>Diffusion models</strong> are emerging for extreme-event prediction: they model complex, multi-modal uncertainty distributions, making them well-suited for rare high-variance shocks like the March 2026 spike</li>
+          </ul>
+        </article>
       </div>
     </section>
   </main>
-
+  <script type="module" src="js/main.js?v=20260814"></script>
   <!-- ─── Slideshow Dock Controls ───────────────────────────────────────── -->
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
@@ -396,11 +696,6 @@
     <button type="button" class="deck-btn" id="deck-next" title="Next Slide (Right Arrow or Space)" aria-label="Next slide">›</button>
   </nav>
 
-  <footer class="site-footer">
-    <p><strong>NYC Pothole Resource Demand Forecast</strong></p>
-    <p>Executive decision support tool · Static presentation hosted on GitHub Pages · Pure HTML/CSS/SVG — no server dependencies, works everywhere.</p>
-  </footer>
 
-  <script type="module" src="js/main.js"></script>
 </body>
 </html>
