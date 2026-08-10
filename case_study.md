@@ -15,7 +15,7 @@ As a Senior LEad Data Analyst, your job is to transform open-source 311 data int
 
 ### Your Task
 
-Using the NYC 311 open dataset, build a monthly forecast of pothole compliants using Prophet (Meta's forecasting library) and produce a short insight-driven presentation.  We are evaluating analytical reasoning and executive story telling.  Send presentation and code to recruiter when complete.  Please spend 2-3 hours, indicate any gaps you would fill later given time.
+Using the NYC 311 open dataset, build a monthly forecast of pothole complaints using Prophet (Meta's forecasting library) and produce a short insight-driven presentation.  We are evaluating analytical reasoning and executive story telling.  Send presentation and code to recruiter when complete.  Please spend 2-3 hours, indicate any gaps you would fill later given time.
 
 ## Additional Guidance
 
@@ -30,7 +30,7 @@ You may filter for complaint type: "Street Condition" and descriptor: "Pothole".
    - Format requriements:
    - 1 paragraph (3-5 sentences) at the top
    - Should frame the business context, importance, and high level results
-   - 305 bullet insights underneath
+   - 3-5 bullet insights underneath
    - must be concrete, quantitative where possible, and decision-relevant
    - Keep it concise, narrative, and leadership-ready
 
