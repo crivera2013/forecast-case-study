@@ -5,6 +5,13 @@
 
 const NS = "http://www.w3.org/2000/svg";
 
+// Default configuration constants
+const DEFAULT_DECIMAL_PLACES = 1;
+const DEFAULT_TICK_COUNT = 5;
+const NICE_STEP_MULTIPLIERS = [1, 2, 2.5, 5, 10];
+const TICK_PRECISION = 6; // Decimal places for tick values
+const TOOLTIP_PADDING = 12; // Padding from edge for tooltip positioning
+
 function el(name, attrs) {
   const node = document.createElementNS(NS, name);
   for (const [k, v] of Object.entries(attrs || {})) {
@@ -13,16 +20,82 @@ function el(name, attrs) {
   return node;
 }
 
+/**
+ * Parse CSV text with proper handling of quoted fields, escaped quotes, and empty values.
+ * Follows RFC 4180 standard for CSV format.
+ */
 export function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   if (!lines.length || !lines[0]) return [];
-  const headers = lines[0].split(",").map((h) => h.trim());
+  
+  // Parse header line
+  const headers = parseCSVLine(lines[0]);
+  
   return lines.slice(1).map((line) => {
-    const cells = line.split(",").map((c) => c.trim());
+    const cells = parseCSVLine(line);
     const row = {};
-    headers.forEach((h, i) => (row[h] = cells[i]));
+    headers.forEach((h, i) => {
+      row[h] = cells[i] !== undefined ? cells[i] : '';
+    });
     return row;
   });
+}
+
+/**
+ * Parse a single CSV line, handling quoted fields properly.
+ * @returns {string[]} Array of cell values
+ */
+function parseCSVLine(line) {
+  const cells = [];
+  let current = '';
+  let inQuotes = false;
+  let i = 0;
+  
+  while (i < line.length) {
+    const char = line[i];
+    const nextChar = line[i + 1];
+    
+    if (inQuotes) {
+      if (char === '"') {
+        // Check for escaped quote
+        if (nextChar === '"') {
+          current += '"';
+          i += 2;
+          continue;
+        } else {
+          // End of quoted field
+          inQuotes = false;
+          i++;
+          continue;
+        }
+      } else {
+        current += char;
+        i++;
+        continue;
+      }
+    } else {
+      // Not in quotes
+      if (char === '"') {
+        inQuotes = true;
+        i++;
+        continue;
+      } else if (char === ',') {
+        cells.push(current.trim());
+        current = '';
+        i++;
+        continue;
+      } else {
+        current += char;
+        i++;
+        continue;
+      }
+    }
+  }
+  
+  // Add the last cell
+  cells.push(current.trim());
+  
+  return cells;
 }
 
 export function formatNum(v) {
@@ -30,12 +103,12 @@ export function formatNum(v) {
   return Math.round(Number(v)).toLocaleString("en-US");
 }
 
-export function formatDecimal(v, decimals = 1) {
+export function formatDecimal(v, decimals = DEFAULT_DECIMAL_PLACES) {
   if (v == null || !Number.isFinite(Number(v))) return "—";
   return Number(v).toFixed(decimals);
 }
 
-export function formatPercent(v, decimals = 1) {
+export function formatPercent(v, decimals = DEFAULT_DECIMAL_PLACES) {
   if (v == null || !Number.isFinite(Number(v))) return "—";
   return `${Number(v).toFixed(decimals)}%`;
 }
@@ -60,7 +133,29 @@ export function isoDate(s) {
   return new Date(`${full}T00:00:00Z`);
 }
 
-function niceTicks(min, max, count = 5) {
+/**
+ * Normalize a date value to YYYY-MM format for comparison.
+ * Handles ISO strings (YYYY-MM-DD or YYYY-MM), Date objects, or timestamps.
+ * @param {string|Date|number} date - The date value to normalize
+ * @returns {string} - YYYY-MM formatted string
+ */
+export function normalizeDateMonth(date) {
+  if (!date) return '';
+  
+  // If already a string in YYYY-MM format
+  const str = String(date);
+  if (str.length >= 7 && str.slice(4, 5) === '-') {
+    return str.slice(0, 7);
+  }
+  
+  // Convert to Date object and format
+  const d = typeof date === 'number' ? new Date(date) : isoDate(date);
+  const year = d.getUTCFullYear();
+  const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
+function niceTicks(min, max, count = DEFAULT_TICK_COUNT) {
   if (min === max) {
     min = min - 1;
     max = max + 1;
@@ -69,7 +164,7 @@ function niceTicks(min, max, count = 5) {
   const rawStep = span / count;
   const pow = Math.pow(10, Math.floor(Math.log10(rawStep || 1)));
   let step = pow;
-  for (const m of [1, 2, 2.5, 5, 10]) {
+  for (const m of NICE_STEP_MULTIPLIERS) {
     if (m * pow >= rawStep) {
       step = m * pow;
       break;
@@ -79,7 +174,7 @@ function niceTicks(min, max, count = 5) {
   const tickMax = Math.ceil(max / step) * step;
   const ticks = [];
   for (let t = tickMin; t <= tickMax + step * 0.5; t += step) {
-    ticks.push(+t.toFixed(6));
+    ticks.push(+t.toFixed(TICK_PRECISION));
   }
   return { ticks, min: tickMin, max: tickMax };
 }
@@ -103,18 +198,17 @@ function showTooltip(html, x, y) {
   tip.style.display = "block";
   const tipW = tip.offsetWidth;
   const tipH = tip.offsetHeight;
-  const pad = 12;
 
-  let left = x + pad;
+  let left = x + TOOLTIP_PADDING;
   let top = y - tipH / 2;
 
-  if (left + tipW > window.innerWidth - 12) {
-    left = x - tipW - pad;
+  if (left + tipW > window.innerWidth - TOOLTIP_PADDING) {
+    left = x - tipW - TOOLTIP_PADDING;
   }
-  if (left < 12) left = 12;
-  if (top < 12) top = 12;
-  if (top + tipH > window.innerHeight - 12) {
-    top = window.innerHeight - tipH - 12;
+  if (left < TOOLTIP_PADDING) left = TOOLTIP_PADDING;
+  if (top < TOOLTIP_PADDING) top = TOOLTIP_PADDING;
+  if (top + tipH > window.innerHeight - TOOLTIP_PADDING) {
+    top = window.innerHeight - tipH - TOOLTIP_PADDING;
   }
 
   tip.style.left = `${left + window.scrollX}px`;
@@ -131,6 +225,80 @@ window.addEventListener("resize", hideTooltip, { passive: true });
 
 /* ─── Interactive Line Chart ────────────────────────────────────────────── */
 
+/**
+ * Extract and normalize all data points from active series for axis calculation.
+ */
+function extractAllPoints(activeSeries) {
+  return activeSeries
+    .flatMap((s) => s.values.filter((p) => Number.isFinite(p.y)))
+    .map((p) => ({ x: isoDate(p.x).getTime(), y: Number(p.y) }));
+}
+
+/**
+ * Calculate the Y-axis range, factoring in confidence bands.
+ */
+function calculateYRange(activeSeries, opts) {
+  const allPoints = extractAllPoints(activeSeries);
+  
+  if (allPoints.length === 0) return { min: 0, max: 0 };
+  
+  let yMinVal = 0;
+  if (opts.includeZero === false) {
+    yMinVal = Math.min(...allPoints.map((p) => p.y));
+  }
+  let yMaxVal = Math.max(...allPoints.map((p) => p.y));
+  
+  // Factor in bands if present
+  for (const s of activeSeries) {
+    if (s.band && Array.isArray(s.band.upper)) {
+      for (const u of s.band.upper) {
+        if (Number.isFinite(u) && u > yMaxVal) yMaxVal = u;
+      }
+    }
+  }
+  
+  return { min: yMinVal, max: yMaxVal };
+}
+
+/**
+ * Create the X and Y scale functions for the chart.
+ */
+function createScales(width, height, pad, xMin, xMax, yAxis, isDiscrete, dateKeys) {
+  const yMin = yAxis.min;
+  const yMax = yAxis.max;
+  
+  const x = (val) => {
+    if (isDiscrete && dateKeys.length > 1) {
+      const key = normalizeDateMonth(val);
+      const idx = dateKeys.indexOf(key);
+      if (idx !== -1) {
+        return pad.left + (idx / (dateKeys.length - 1)) * (width - pad.left - pad.right);
+      }
+    }
+    const t = typeof val === "number" ? val : isoDate(val).getTime();
+    return pad.left + ((t - xMin) / (xMax - xMin || 1)) * (width - pad.left - pad.right);
+  };
+  
+  const y = (v) => pad.top + (1 - (v - yMin) / (yMax - yMin || 1)) * (height - pad.top - pad.bottom);
+  
+  return { x, y };
+}
+
+/**
+ * Extract discrete date keys from series data.
+ */
+function extractDateKeys(activeSeries) {
+  return Array.from(new Set(activeSeries.flatMap((s) => s.values.map((p) => normalizeDateMonth(p.x))))).sort();
+}
+
+/**
+ * Check if chart has no data to display.
+ */
+function hasNoData(activeSeries) {
+  const allPoints = extractAllPoints(activeSeries);
+  return allPoints.length === 0;
+}
+
 export function lineChart(container, opts = {}) {
   if (!container) return;
   const width = opts.width || 1000;
@@ -142,57 +310,25 @@ export function lineChart(container, opts = {}) {
   function render() {
     container.innerHTML = "";
     const activeSeries = seriesState.filter((s) => s.visible);
-
-    const allPoints = activeSeries
-      .flatMap((s) => s.values.filter((p) => Number.isFinite(p.y)))
-      .map((p) => ({ x: isoDate(p.x).getTime(), y: Number(p.y) }));
-
-    if (allPoints.length === 0) {
+    
+    // Check for empty data
+    if (hasNoData(activeSeries)) {
       container.innerHTML = `<div class="chart-empty"><p>Select at least one series from the legend to display data.</p></div>`;
       renderLegend();
       return;
     }
 
-    let yMinVal = 0;
-    if (opts.includeZero === false) {
-      yMinVal = Math.min(...allPoints.map((p) => p.y));
-    }
-    let yMaxVal = Math.max(...allPoints.map((p) => p.y));
-
-    // Factor in bands if present
-    for (const s of activeSeries) {
-      if (s.band && Array.isArray(s.band.upper)) {
-        for (const u of s.band.upper) {
-          if (Number.isFinite(u) && u > yMaxVal) yMaxVal = u;
-        }
-      }
-    }
-
+    // Calculate ranges and keys
     const isDiscrete = opts.exactXTicks || false;
-    let dateKeys = [];
-    if (isDiscrete) {
-      dateKeys = Array.from(new Set(activeSeries.flatMap((s) => s.values.map((p) => String(p.x).slice(0, 7))))).sort();
-    }
-
+    const dateKeys = isDiscrete ? extractDateKeys(activeSeries) : [];
+    const allPoints = extractAllPoints(activeSeries);
     const xMin = Math.min(...allPoints.map((p) => p.x));
     const xMax = Math.max(...allPoints.map((p) => p.x));
-
-    const yAxis = niceTicks(yMinVal, yMaxVal, 4);
-    const yMin = yAxis.min;
-    const yMax = yAxis.max;
-
-    const x = (val) => {
-      if (isDiscrete && dateKeys.length > 1) {
-        const key = typeof val === "string" ? val.slice(0, 7) : new Date(val).toISOString().slice(0, 7);
-        const idx = dateKeys.indexOf(key);
-        if (idx !== -1) {
-          return pad.left + (idx / (dateKeys.length - 1)) * (width - pad.left - pad.right);
-        }
-      }
-      const t = typeof val === "number" ? val : isoDate(val).getTime();
-      return pad.left + ((t - xMin) / (xMax - xMin || 1)) * (width - pad.left - pad.right);
-    };
-    const y = (v) => pad.top + (1 - (v - yMin) / (yMax - yMin || 1)) * (height - pad.top - pad.bottom);
+    const yRange = calculateYRange(activeSeries, opts);
+    const yAxis = niceTicks(yRange.min, yRange.max, 4);
+    
+    // Create scale functions
+    const { x, y } = createScales(width, height, pad, xMin, xMax, yAxis, isDiscrete, dateKeys);
     const svg = el("svg", {
       viewBox: `0 0 ${width} ${height}`,
       class: "interactive-svg",
@@ -219,6 +355,19 @@ export function lineChart(container, opts = {}) {
       const label = el("text", { class: "axis-tick", x: pad.left - 10, y: yi + 4, "text-anchor": "end" });
       label.textContent = opts.yFormat ? opts.yFormat(tick) : formatNum(tick);
       svg.appendChild(label);
+    }
+
+    // Y Axis Label
+    if (opts.yLabel) {
+      const yLabelText = el("text", {
+        class: "axis-title",
+        x: pad.left - 12,
+        y: (height - pad.top - pad.bottom) / 2 + pad.top,
+        "text-anchor": "middle",
+        transform: "rotate(-90, 10, 180)",
+      });
+      yLabelText.textContent = opts.yLabel;
+      svg.appendChild(yLabelText);
     }
 
     // X Ticks
@@ -250,15 +399,33 @@ export function lineChart(container, opts = {}) {
       const g = el("g", { class: "event-marker-group" });
       g.appendChild(el("line", { class: "event-line", x1: xi, x2: xi, y1: pad.top, y2: height - pad.bottom }));
       
+      const badgeW = Math.max(e.label.length * 6.8 + 16, 70);
+      let badgeX = xi - badgeW / 2;
+      let txtX = xi;
+
+      if (badgeX + badgeW > width - 12) {
+        badgeX = width - badgeW - 12;
+        txtX = badgeX + badgeW / 2;
+      }
+      if (badgeX < 12) {
+        badgeX = 12;
+        txtX = badgeX + badgeW / 2;
+      }
+
       const badge = el("rect", {
-        x: xi - (e.label.length * 4 + 8),
+        x: badgeX,
         y: pad.top - 24,
-        width: e.label.length * 8 + 16,
+        width: badgeW,
         height: 20,
         rx: 4,
         class: "event-badge-bg",
       });
-      const txt = el("text", { class: "event-badge-txt", x: xi, y: pad.top - 10, "text-anchor": "middle" });
+      const txt = el("text", {
+        class: "event-badge-txt",
+        x: txtX,
+        y: pad.top - 10,
+        "text-anchor": "middle",
+      });
       txt.textContent = e.label;
       g.appendChild(badge);
       g.appendChild(txt);
@@ -385,7 +552,7 @@ export function lineChart(container, opts = {}) {
       let activeCount = 0;
 
       hoverDots.forEach(({ dot, series }) => {
-        const matchIdx = series.values.findIndex((p) => String(p.x).slice(0, 7) === String(closestDate).slice(0, 7));
+        const matchIdx = series.values.findIndex((p) => normalizeDateMonth(p.x) === normalizeDateMonth(closestDate));
         if (matchIdx !== -1) {
           const pt = series.values[matchIdx];
           const py = y(pt.y);
@@ -687,57 +854,4 @@ export function enhanceTable(tableId, options = {}) {
     });
   }
 
-  // Quick Action: Export CSV
-  const tableWrapper = table.closest(".table-container") || table.parentElement;
-  if (options.enableExport && tableWrapper && !tableWrapper.querySelector(".table-actions")) {
-    const actions = document.createElement("div");
-    actions.className = "table-actions";
-
-    const copyBtn = document.createElement("button");
-    copyBtn.type = "button";
-    copyBtn.className = "btn-table-action";
-    copyBtn.innerHTML = "📋 Copy Data";
-    copyBtn.addEventListener("click", () => {
-      const csv = exportTableToCSV(table);
-      navigator.clipboard.writeText(csv).then(() => {
-        copyBtn.textContent = "✓ Copied!";
-        setTimeout(() => (copyBtn.textContent = "📋 Copy Data"), 2000);
-      });
-    });
-
-    const dlBtn = document.createElement("button");
-    dlBtn.type = "button";
-    dlBtn.className = "btn-table-action";
-    dlBtn.innerHTML = "⬇ Download CSV";
-    dlBtn.addEventListener("click", () => {
-      const csv = exportTableToCSV(table);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `${tableId}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-
-    actions.appendChild(copyBtn);
-    actions.appendChild(dlBtn);
-    tableWrapper.insertBefore(actions, tableWrapper.firstChild);
-  }
-}
-
-function exportTableToCSV(table) {
-  const rows = Array.from(table.querySelectorAll("tr"));
-  return rows
-    .map((row) => {
-      const cells = Array.from(row.querySelectorAll("th, td"));
-      return cells
-        .map((cell) => {
-          let text = cell.textContent.trim().replace(/"/g, '""');
-          return `"${text}"`;
-        })
-        .join(",");
-    })
-    .join("\n");
 }

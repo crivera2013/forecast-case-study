@@ -8,12 +8,19 @@ import {
   formatNum,
   formatPercent,
   monthLabel,
+  normalizeDateMonth,
   lineChart,
   barChart,
   enhanceTable,
 } from "./charts.js";
 
 const DATA_DIR = "data/";
+
+// Fallback KPI values when data loading fails
+// These match the actual expected values from the dataset
+const FALLBACK_AUG_FORECAST = 2758;
+const FALLBACK_MAR_FORECAST = 10810;
+const FALLBACK_MAR_ACTUAL = 25171;
 
 async function loadCSV(filename) {
   const res = await fetch(DATA_DIR + filename);
@@ -186,13 +193,12 @@ async function main() {
     ]);
 
     // ── 1. KPI Cards in Hero ──
-    const augForecast = num(bestForecast[0]?.yhat) || 2862;
-    const marForecast = num(bestForecast.find((r) => String(r.ds).slice(0, 7) === "2027-03")?.yhat) || 10810;
-    const marActual = num(history.find((r) => String(r.ds).slice(0, 7) === "2026-03")?.y) || 25171;
+    const augForecast = num(bestForecast[0]?.yhat) || FALLBACK_AUG_FORECAST;
+    const marForecast = num(bestForecast.find((r) => normalizeDateMonth(r.ds) === "2027-03")?.yhat) || FALLBACK_MAR_FORECAST;
+    const marActual = num(history.find((r) => normalizeDateMonth(r.ds) === "2026-03")?.y) || FALLBACK_MAR_ACTUAL;
 
     setStatText("kpi-aug-val", formatNum(augForecast));
     setStatText("kpi-mar-val", formatNum(marForecast));
-    setStatText("kpi-mape-val", "11.4%");
     setStatText("kpi-outlier-val", formatNum(marActual));
 
     // ── 2. Historical Baseline Chart ──
@@ -218,12 +224,13 @@ async function main() {
       "2016-01", "2016-02", "2016-03", "2016-04"
     ];
     const benchmark2015Values = benchmark2015Months.map((m) => {
-      const match = history.find((r) => String(r.ds).slice(0, 7) === m);
+      const match = history.find((r) => normalizeDateMonth(r.ds) === m);
       return num(match?.y);
     });
 
     lineChart(document.getElementById("forecast-chart"), {
       title: "9-Month Complaints Forecast with 95% Confidence Bounds",
+      yLabel: "Projected # of Complaints",
       series: [
         {
           label: "Primary Forecast (B · Multiplicative)",
@@ -261,6 +268,9 @@ async function main() {
       "Spring thaw (~5.8k)",
     ];
 
+    // March 2027 is at index 7 in the 9-month forecast (Aug 2026 - Apr 2027)
+    const MARCH_2027_INDEX = 7;
+
     populateTable(
       "forecast-table",
       bestForecast.map((r, i) => {
@@ -268,7 +278,7 @@ async function main() {
         const altVal = i < testForecast.length ? num(testForecast[i].yhat) : null;
         const bmarkVal = benchmark2015Values[i];
         return {
-          isWinner: i === 7, // Highlight March peak
+          isWinner: i === MARCH_2027_INDEX, // Highlight March peak
           cells: [
             { text: monthLabel(r.ds, true), sortValue: r.ds },
             { text: formatNum(yhatVal), sortValue: yhatVal },
@@ -279,7 +289,7 @@ async function main() {
         };
       })
     );
-    enhanceTable("forecast-table", { enableExport: true });
+    enhanceTable("forecast-table");
     // ── 4. Seasonality Chart ──
     const monthlyTotals = Array.from({ length: 12 }, () => ({ sum: 0, count: 0 }));
     for (const r of seasonality) {
@@ -324,16 +334,32 @@ async function main() {
     });
 
     // ── 5. Model Selection Chart & Table ──
+    // Model selection constants
+    const WINNING_MODEL_MAPE = 11.4;
+    const WINNING_MODEL_DESCRIPTION = 'Linear + Multiplicative';
+
+    // Mapping of verbose model configuration names to short labels
+    const MODEL_LABEL_MAP = {
+      'B (multiplicative) | cp=': 'B · ',
+      'A (additive-smooth) | cp=': 'A · ',
+      'C (additive-flex) | cp=': 'C · ',
+      'D (flat-trend) | cp=': 'D · ',
+      'auto-flexible+regressors': 'flex+reg',
+      'events+regressors': 'event+reg',
+      'auto-flexible': 'flexible',
+      'regressors': 'regress',
+    };
+
+    /**
+     * Convert verbose model configuration name to short label for display.
+     * Replaces known patterns with shorter, more readable labels.
+     */
     const shortConfigName = (s) => {
-      return s
-        .replace(/B \(multiplicative\) \| cp=/, "B · ")
-        .replace(/A \(additive-smooth\) \| cp=/, "A · ")
-        .replace(/C \(additive-flex\) \| cp=/, "C · ")
-        .replace(/D \(flat-trend\) \| cp=/, "D · ")
-        .replace(/auto-flexible\+regressors/, "flex+reg")
-        .replace(/events\+regressors/, "event+reg")
-        .replace(/auto-flexible/, "flexible")
-        .replace(/regressors/, "regress");
+      let result = s;
+      for (const [pattern, replacement] of Object.entries(MODEL_LABEL_MAP)) {
+        result = result.replace(new RegExp(pattern, 'g'), replacement);
+      }
+      return result;
     };
 
     barChart(document.getElementById("models-chart"), {
@@ -343,7 +369,7 @@ async function main() {
         fullLabel: r.full,
         value: num(r.avg) || 0,
         highlight: i === 0,
-        note: i === 0 ? "Validation Winner: 11.4% Avg MAPE (Linear + Multiplicative)" : undefined,
+        note: i === 0 ? `Validation Winner: ${WINNING_MODEL_MAPE}% Avg MAPE (${WINNING_MODEL_DESCRIPTION})` : undefined,
       })),
       xLabel: "Average Validation MAPE % (Lower is Better)",
       valueFormat: (v) => `${v.toFixed(1)}%`,
@@ -369,7 +395,7 @@ async function main() {
         ],
       }))
     );
-    enhanceTable("models-table", { enableExport: true, defaultSortCol: 3, defaultSortAsc: true });
+    enhanceTable("models-table", { defaultSortCol: 3, defaultSortAsc: true });
 
     // ── 6. Test Period Evaluation Chart & Table ──
     lineChart(document.getElementById("validation-chart"), {
@@ -399,7 +425,7 @@ async function main() {
         const diff = act - pred;
         const isPos = diff >= 0;
         return {
-          isWinner: String(r.ds).slice(0, 7) === "2026-03",
+          isWinner: normalizeDateMonth(r.ds) === "2026-03",
           cells: [
             { text: monthLabel(r.ds, true), sortValue: r.ds },
             { text: formatNum(act), sortValue: act },
@@ -412,7 +438,7 @@ async function main() {
         };
       })
     );
-    enhanceTable("validation-table", { enableExport: true });
+    enhanceTable("validation-table");
 
     // ── 7. Initialize Slide Deck Navigation ──
     initSlideDeck();

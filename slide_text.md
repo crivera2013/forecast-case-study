@@ -41,7 +41,6 @@ Complaints remain at baseline through autumn (~2.2k–2.8k/mo), then surge to 10
 - **Total Volume**: 991,071 complaints across 200 months (average: ~4,955/mo).
 - **2015 Snowstorms**: Severe winter blizzards drove a sustained ~20% baseline increase.
 - **March 2026 Spike**: Record 25,171 complaints (5.1× normal volume weather anomaly).
-- **Objective**: Forecast monthly complaints and quantify winter surge timing.
 
 ---
 
