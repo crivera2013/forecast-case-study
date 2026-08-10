@@ -1,0 +1,9 @@
+full,val1,val2,avg,cv,test
+B (multiplicative) | cp=none,6.0,16.8,11.4,21.7,33.9
+B (multiplicative) | cp=auto,14.7,9.6,12.2,19.7,32.4
+B (multiplicative) | cp=events,13.1,11.6,12.4,18.7,27.2
+B (multiplicative) | cp=regressors,13.5,11.4,12.5,31.3,28.2
+B (multiplicative) | cp=auto-flexible+regressors,17.9,11.5,14.7,32.2,24.4
+B (multiplicative) | cp=events+regressors,16.6,13.0,14.8,31.6,24.5
+A (additive-smooth) | cp=events,16.3,13.4,14.9,25.9,33.5
+A (additive-smooth) | cp=auto-flexible,17.7,13.5,15.6,26.5,33.5

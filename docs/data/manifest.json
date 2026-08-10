@@ -1,0 +1,53 @@
+{
+  "generated": "2026-08-09",
+  "history": {
+    "total_complaints": 991071,
+    "months": 200,
+    "start": "2009-12",
+    "end": "2026-07",
+    "avg_monthly": 4955,
+    "covid_april_2020": 1946,
+    "march_2026": 25171,
+    "march_2026_vs_avg": 5.1
+  },
+  "models": {
+    "best": {
+      "config": "B (multiplicative) | cp=none",
+      "avg_val_mape": 11.4,
+      "val_1_mape": 6.0,
+      "val_2_mape": 16.8,
+      "cv_mape": 21.7,
+      "test_mape": 33.9,
+      "clean_test_mape": 30.4,
+      "file": "data/best_forecast_data.csv",
+      "note": "Validation winner. No trend changepoints and no event regressors, so it does not react to the 2025-2026 events."
+    },
+    "test": {
+      "config": "A (additive-smooth) | cp=auto+regressors",
+      "avg_val_mape": 17.9,
+      "test_mape": 23.3,
+      "clean_test_mape": 19.5,
+      "file": "data/test_forecast_data.csv",
+      "note": "Best held-out test model. Includes snowstorm_2015 and covid_period regressors."
+    },
+    "event_aware": {
+      "config": "B (multiplicative) | event changepoints + regressors",
+      "file": "data/forecast_data.csv",
+      "note": "Event-aware model covering full history with 2015/COVID changepoints and regressors."
+    }
+  },
+  "march_2026": {
+    "actual": 25171,
+    "predicted_best": 7036,
+    "absolute_error": 18135,
+    "ape": 72.0
+  },
+  "validation_windows": [
+    "Aug 2023 - Jul 2024 (6.0% MAPE)",
+    "Aug 2024 - Jan 2025 (16.8% MAPE)"
+  ],
+  "sources": {
+    "nyc_open_data": "https://data.cityofnewyork.us/Social-Services/311-Service-Requests/erm2-nwe9",
+    "repo": "https://github.com/crivera2013/forecast-case-study"
+  }
+}
