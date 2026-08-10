@@ -359,12 +359,16 @@ export function lineChart(container, opts = {}) {
 
     // Y Axis Label
     if (opts.yLabel) {
+      const yMid = (height - pad.top - pad.bottom) / 2 + pad.top;
       const yLabelText = el("text", {
         class: "axis-title",
-        x: pad.left - 12,
-        y: (height - pad.top - pad.bottom) / 2 + pad.top,
-        "text-anchor": "middle",
-        transform: "rotate(-90, 10, 180)",
+        x: pad.left - 30,
+        y: yMid,
+        "text-anchor": "end",
+        "transform": `rotate(-90, ${pad.left - 30}, ${yMid})`,
+        fill: "#000",
+        "font-size": "12px",
+        "font-weight": "600",
       });
       yLabelText.textContent = opts.yLabel;
       svg.appendChild(yLabelText);
