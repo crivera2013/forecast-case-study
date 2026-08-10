@@ -1,0 +1,12 @@
+{
+  "name": "A (additive-smooth) | cp=auto+regressors",
+  "changepoint_strategy": "auto+regressors",
+  "growth": "linear",
+  "seasonality_mode": "additive",
+  "changepoint_prior_scale": 0.01,
+  "seasonality_prior_scale": 100.0,
+  "regressors": [
+    "snowstorm_2015",
+    "covid_period"
+  ]
+}

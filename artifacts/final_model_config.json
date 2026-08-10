@@ -1,0 +1,20 @@
+{
+  "name": "B (multiplicative)",
+  "growth": "linear",
+  "seasonality_mode": "multiplicative",
+  "changepoint_prior_scale": 0.01,
+  "seasonality_prior_scale": 100.0,
+  "changepoints": [
+    "2015-01-01",
+    "2015-02-01",
+    "2015-03-01",
+    "2020-03-01",
+    "2020-04-01"
+  ],
+  "regressors": [
+    "snowstorm_2015",
+    "covid_period",
+    "march_2026_spike"
+  ],
+  "mcmc_samples": 300
+}
