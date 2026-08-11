@@ -51,24 +51,25 @@
     <section class="slide slide-hero" id="slide-1" aria-labelledby="title-slide-1">
       <div class="hero-content">
         <h1 id="title-slide-1">Resource Planning Forecast: NYC Pothole Maintenance Demand</h1>
-        <p class="hero-claim"><strong>Purpose:</strong> Enable DOT to proactively assemble crews, materials, and budget to handle recurring pothole maintenance</p>
-        <p class="hero-claim" style="margin-top: -0.8rem; color: var(--ink-67);"><strong>What this report provides:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
-        
+        <p class="hero-claim"><strong>Purpose:</strong> Enable the Department of Transportation (DOT) to proactively assemble crews, materials, and budget to handle recurring pothole maintenance</p>
+        <p class="hero-claim"><strong>What this report provides:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
+         <p class="hero-claim"><strong>Background:</strong> From 2020 to 2025, NYC experienced extremely mild snowfall and the lowest pothole complaint volume since this dataset started in 2009.  However 2026 saw the largest snowfall in NYC in 11 years.  In order to account for this outlier event's current and future impact to the DOT's forecasting, the DOT will need more rigorous and resllient forecasting techniques moving forward </p>
+        <p class="hero-claim"><strong>Noteable Pothole Complaint Numbers</strong> </p>
         <div class="hero-metrics-grid" aria-label="Executive KPI Metrics" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
           <article class="metric-card accent-yellow">
             <span class="metric-title">Extreme Snowfall (Mar '26)</span>
             <span class="metric-value" id="kpi-outlier-val">25,171</span>
-            <p class="metric-desc">5x more complaints than usual; still responsible for current elevated levels</p>
+            <p class="metric-desc">Highest ever monthly number recorded; 5x higher than the usual yearly peak</p>
           </article>
           <article class="metric-card accent-turquoise">
             <span class="metric-title">Projected (August '26)</span>
             <span class="metric-value" id="kpi-aug-val">2,685</span>
-            <p class="metric-desc">Typical summer demand&mdash;<strong>manageable with current staffing</strong></p>
+            <p class="metric-desc">Typical summer demand but definitely an underestimate</p>
           </article>
           <article class="metric-card accent-red">
             <span class="metric-title">Projected Peak (Mar '27)</span>
             <span class="metric-value" id="kpi-mar-val">10,921</span>
-            <p class="metric-desc">Expecting <strong>~2x more</strong> than typical from 2020-2025</p>
+            <p class="metric-desc">Expecting <strong>~2x more</strong> than typically seen from 2020-2025</p>
           </article>
         </div>
       </div>
@@ -83,7 +84,7 @@
 
       <div class="chart-container">
         <div class="chart-header">
-          <span class="chart-title">Monthly Complaint Projections with 95% Confidence Bounds</span>
+          <span class="chart-title">Monthly Complaint Projections with 95% Confidence Bands</span>
         </div>
         <div id="forecast-chart" class="chart-figure"></div>
       </div>
@@ -91,7 +92,7 @@
 
       <div class="decision-box">
         <h4>Analyst Recommendation for Leadership</h4>
-        <p><strong>Action Required:</strong> Given 2026's record snowfall, complaint volumes will likely exceed baseline forecasts. Operations should scale capacity closer to the upper forecast range. The model provides conservative estimates as it requires more data points to better evaluate the anomalous 2026 snowfall</p>
+        <p><strong>Action Required:</strong> Given 2026's record snowfall, complaint volumes will likely exceed baseline forecasts for the next few months as the model adjusts to the anomalous data. Operations should scale capacity closer to the upper forecast range.</p>
       </div>
     </section>
 
@@ -165,7 +166,7 @@
           </div>
           <ul class="snappy-bullets">
             <li>Annual complaint trough across NYC</li>
-            <li>Dry, warm summer and autumn weather minimizes surface breaks</li>
+            <li>Dry, warm summer and autumn weather minimizes pothole formations</li>
           </ul>
         </article>
         <article class="exec-card">
@@ -184,8 +185,8 @@
     <!-- ─── Slide 5: Outlier Stress-Testing ──────────────────────────────── -->
     <section class="slide" id="slide-5" aria-labelledby="title-slide-5">
       <div class="slide-header">
-        <h2 id="title-slide-5">Stress Test: How the Model Handles Extreme Weather</h2>
-        <p class="lead">March 2026 was a record: <strong>25,171 actual complaints</strong> vs. our predicted <strong>6,807</strong>. This extreme weather event tested our model's limits. Result: even including this outlier, our forecast maintained <strong>72.8% accuracy</strong> (27.2% error)</p>
+        <h2 id="title-slide-5">Stress Test: How the Model Handled Outlier Extreme Weather in its Test Dataset</h2>
+        <p class="lead">A Model was selected based on its cross validation performance from 2009 to July 2025.  The model was then tested on August 2025-July 2026 data.  March 2026 had a record: <strong>25,171 actual complaints</strong> vs. the predicted <strong>6,807</strong>. While this outlier winter event tested the model's limits, the forecast maintained a <strong>72.8% accuracy</strong> (27.2% error).</p>
       </div>
 
       <div class="chart-container">
@@ -199,8 +200,8 @@
     <!-- ─── Slide 6: Model Selection ─────────────────────────────────────── -->
     <section class="slide" id="slide-6" aria-labelledby="title-slide-6">
       <div class="slide-header">
-        <h2 id="title-slide-6">Rigorous Model Selection: Validation Matrix</h2>
-        <p class="lead">Comparing 4 trend configurations (A&ndash;D) across 7 changepoint strategies on held-out test data (Aug 2025 &ndash; Jul 2026). Multiplicative seasonality with explicit event changepoints achieves the best CV generalization (18.7% MAPE).</p>
+        <h2 id="title-slide-6">Model Hyperparameter Selection: Validation Matrix</h2>
+        <p class="lead">Comparing 4 trend configurations (A&ndash;D) across 7 changepoint strategies on held-out test data (Aug 2025 &ndash; Jul 2026). Multiplicative seasonality with explicit event changepoints achieves the best cross-validation generalization with the lowest mean absolute percentage error (MAPE) of 18.7%.</p>
       </div>
       <div class="heatmap-dashboard" id="model-heatmaps-dashboard">
 
@@ -570,12 +571,11 @@
         <article class="exec-card">
           <div class="exec-card-header">
             <span class="exec-icon exec-icon-azure">1</span>
-            <h4>Cross-Validation (14 Historical Folds)</h4>
+            <h4>Cross-Validation (CV) (14 Historical Folds)</h4>
           </div>
           <ul class="snappy-bullets">
             <li><strong>Selected Model (B multiplicative | events)</strong> wins at <strong>18.7% MAPE</strong></li>
             <li>Adding regressors inflates CV error to &gt;31%–41% due to overfitting</li>
-            <li><em>→ Simpler model generalizes best across 16 years</em></li>
           </ul>
         </article>
         <article class="exec-card">
@@ -585,8 +585,7 @@
           </div>
           <ul class="snappy-bullets">
             <li>Regressors help fit extreme shocks (24.4% vs 27.2% test MAPE)</li>
-            <li>However, the selected events model retains 72.8% accuracy without regressor overfitting</li>
-            <li><em>→ Robust performance during unprecedented weather</em></li>
+            <li>However, the cross validation shows those regressors having deleterious recency bias with a MAPE of 32.2% (compared to 18.7% for the selected model)</li>
           </ul>
         </article>
       </div>
@@ -608,7 +607,7 @@
           <ul class="snappy-bullets">
             <li><strong>Source:</strong> NYC 311 Service Requests, downloaded via the Socrata API</li>
             <li><strong>Counted:</strong> Complaints matching <code>%POTHOLE%</code> in the descriptor field, plus <code>'Rough, Pitted or Cracked Roads'</code>, across Street, Highway, and Bridge Condition datasets (~918K total)</li>
-            <li><strong>Time range:</strong> 200 full months, Dec 2009 through Jul 2026 — Only the incomplete current month (Aug 2026) was dropped — The March 2026 spike and April 2020 dip were kept — they are real events, not data errors</li>
+            <li><strong>Time range:</strong> 200 full months, Dec 2009 through Jul 2026, with only the incomplete current month (Aug 2026) dropped</li>
           </ul>
         </article>
 
@@ -620,9 +619,9 @@
           <ul class="snappy-bullets">
             <li><strong>What it is:</strong> A Generalized Additive Model (GAM) that splits a time series into three parts:
               <br><code>y(t) = trend(t) + seasonality(t) + events(t) + noise</code></li>
-            <li><strong>Trend:</strong> A straight line that can bend at changepoints — Bends are detected automatically, supplemented with two explicit breaks: the 2015 snowstorms and the 2020 pandemic</li>
+            <li><strong>Trend:</strong> A straight line that can bend at changepoints. Bends are detected automatically, supplemented with two explicit breaks: the 2015 snowstorms and the 2020 pandemic</li>
             <li><strong>Seasonality:</strong> A smooth yearly wave (Fourier series) that captures the March peak and summer trough without overfitting</li>
-            <li><strong>How it fits:</strong> Powered by <em>Stan</em>, a Bayesian inference engine — Full MCMC sampling (300 draws) is used so the confidence bands reflect real uncertainty — not just trend noise</li>
+            <li><strong>How it fits:</strong> Powered by <em>Stan</em>, a Bayesian inference engine with MCMC sampling (300 draws) is used so the confidence bands reflect true uncertainty</li>
           </ul>
         </article>
 
@@ -633,8 +632,8 @@
           </div>
           <ul class="snappy-bullets">
             <li><strong>Held-out test:</strong> 72.8% accurate (27.2% MAPE) on 12 unseen months that include the record March 2026 winter</li>
-            <li><strong>14-fold cross-validation:</strong> 81.3% accurate (18.7% MAPE) across every year from 2009–2025 — The model generalizes</li>
-            <li><strong>32-config search:</strong> 4 trend types &times; 8 changepoint strategies were tested; the winner was selected by lowest CV error — no cherry-picking</li>
+            <li><strong>14-fold cross-validation:</strong> 81.3% accurate (18.7% MAPE) across every year from 2009–2025</li>
+            <li><strong>32-config search:</strong> 4 trend types &times; 8 changepoint strategies were tested; the winner was selected by lowest CV error</li>
           </ul>
         </article>
 
@@ -645,8 +644,8 @@
           </div>
           <ul class="snappy-bullets">
             <li><strong>MAPE</strong> = Mean Absolute Percentage Error — How far off predictions are, on average, as a percentage. 18.7% MAPE = off by 18.7% — Lower is better</li>
-            <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend — Some are automatic; the 2015 and 2020 ones were set by hand</li>
-            <li><strong>Regressors:</strong> Extra on/off flags for known event windows (e.g., <code>snowstorm_2015</code> = 1 for Jan–Mar 2015) — They let the model handle big shocks without warping the trend</li>
+            <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend. While Prophet can handle this automatically, events like the 2015 blizzard and 2020 pandemic events were set by hand</li>
+            <li><strong>Regressors:</strong> Extra on/off flags for known event windows (e.g., <code>snowstorm_2015</code> = 1 for Jan–Mar 2015) that let the model handle shocks without warping the trend</li>
           </ul>
         </article>
 
@@ -667,8 +666,8 @@
             <h4>New Data Inputs</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Weather:</strong> Snowfall, rainfall, and freeze-thaw cycles are the direct physical drivers of pothole formation — Integrating NOAA daily temperature, precipitation, and snow-depth data as regressors would let the forecast respond to conditions in real time, rather than relying on seasonal averages</li>
-            <li><strong>Cave-in complaints:</strong> Cave-ins share the same root cause as potholes — freeze-thaw cycles weaken pavement from below — The physics does not distinguish between complaint categories — ~168K cave-in records exist in the 311 dataset — Though handled by a different department, including them would give a more complete picture of freeze-thaw damage across NYC infrastructure</li>
+            <li><strong>Weather:</strong> Snowfall, rainfall, and freeze-thaw cycles are the main drivers of pothole formation.  Therefore using temperature, precipitation, and snow-depth data as inputs for the forecast as leading indicators would probably improve the model results</li>
+            <li><strong>Cave-in complaints:</strong> "Cave-ins" are potholes formed due to freeze-thaw-induced cavities under the asphalt instead of within the asphalt.  While "cave-in" complaints are handled by a different department, there are ~168K cave-in records in the 311 dataset and including them could provide more information to improve forecasting</li>
           </ul>
         </article>
 
@@ -679,8 +678,8 @@
           </div>
           <ul class="snappy-bullets">
             <li><strong>Gradient-boosted trees</strong> (XGBoost, LightGBM, CatBoost) can capture non-linear interactions between weather and complaint history that an additive GAM cannot express</li>
-            <li><strong>Foundation forecasters</strong> (AWS Chronos, Google TimesFM) treat time-series prediction as a language-modeling problem — Zero-shot — no per-series training needed</li>
-            <li><strong>Reinforcement learning</strong> could optimize the sequential crew-allocation and resource-deployment problem week-to-week under evolving forecast uncertainty</li>
+            <li><strong>Foundation forecasters</strong> (AWS Chronos, Google TimesFM) treat time-series prediction as a language-modeling problem</li>
+            <li><strong>Reinforcement learning</strong> could optimize the sequential crew-allocation and resource-deployment problem under evolving forecast uncertainty</li>
             <li><strong>Diffusion models</strong> are emerging for extreme-event prediction: they model complex, multi-modal uncertainty distributions, making them well-suited for rare high-variance shocks like the March 2026 spike</li>
           </ul>
         </article>
