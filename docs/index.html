@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260820">
+  <link rel="stylesheet" href="styles.css?v=20260811_15">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -36,6 +36,7 @@
               <li><a href="#slide-6">Model Selection</a></li>
               <li><a href="#slide-7">Methodology</a></li>
               <li><a href="#slide-8">Next Steps</a></li>
+              <li><a href="#slide-9">About</a></li>
             </ul>
           </li>
         </ul>
@@ -52,9 +53,9 @@
       <div class="hero-content">
         <h1 id="title-slide-1">Resource Planning Forecast: NYC Pothole Maintenance Demand</h1>
         <p class="hero-claim"><strong>Purpose:</strong> Enable the Department of Transportation (DOT) to proactively assemble crews, materials, and budget to handle recurring pothole maintenance</p>
-        <p class="hero-claim"><strong>What this report provides:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
-         <p class="hero-claim"><strong>Background:</strong> From 2020 to 2025, NYC experienced extremely mild snowfall and the lowest pothole complaint volume since this dataset started in 2009.  However 2026 saw the largest snowfall in NYC in 11 years.  In order to account for this outlier event's current and future impact to the DOT's forecasting, the DOT will need more rigorous and resllient forecasting techniques moving forward </p>
-        <p class="hero-claim"><strong>Noteable Pothole Complaint Numbers</strong> </p>
+        <p class="hero-claim"><strong>Result:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
+        <p class="hero-claim"><strong>Background:</strong> Following a period of unusually mild winters (2020–2025), the record snowfall of 2026 has fundamentally shifted demand patterns. To manage this new volatility, the DOT must transition to more robust, outlier-resilient forecasting to ensure resource readiness.</p>
+        <p class="hero-claim"><strong>Notable Pothole Complaint Numbers</strong> </p>
         <div class="hero-metrics-grid" aria-label="Executive KPI Metrics" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
           <article class="metric-card accent-yellow">
             <span class="metric-title">Extreme Snowfall (Mar '26)</span>
@@ -79,7 +80,7 @@
     <section class="slide" id="slide-2" aria-labelledby="title-slide-2">
       <div class="slide-header">
         <h2 id="title-slide-2">9-Month Resource Demand Forecast (Aug 2026 – Apr 2027)</h2>
-        <p class="lead">Through autumn, expect normal demand (~2.2k–2.8k/month). Complaints will surge to 10,921 by March 2027 (~4x the autumn baseline). The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
+        <p class="lead">Through autumn, expect normal demand (~2.2k–2.8k/month). <strong>Complaints will surge to 11k in March 2027 (~4x the autumn baseline).</strong> The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
       </div>
 
       <div class="chart-container">
@@ -92,7 +93,7 @@
 
       <div class="decision-box">
         <h4>Analyst Recommendation for Leadership</h4>
-        <p><strong>Action Required:</strong> Given 2026's record snowfall, complaint volumes will likely exceed baseline forecasts for the next few months as the model adjusts to the anomalous data. Operations should scale capacity closer to the upper forecast range.</p>
+        <p><strong>Action Required:</strong> Given 2026's record snowfall, <strong>complaint volumes will likely exceed baseline forecasts</strong> for the next few months as the model adjusts to the anomalous data. Operations should scale capacity closer to the upper forecast range.</p>
       </div>
     </section>
 
@@ -112,7 +113,6 @@
       <div class="executive-insights-grid">
         <div class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-yellow">1</span>
             <h4>2015 Winter Thaw</h4>
           </div>
           <ul class="snappy-bullets">
@@ -122,7 +122,6 @@
         </div>
         <div class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-red">2</span>
             <h4>2026 Winter Thaw</h4>
           </div>
           <ul class="snappy-bullets">
@@ -151,17 +150,15 @@
       <div class="executive-insights-grid">
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-red">↑</span>
             <h4>March: Peak Demand Period (+148%)</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>Annual peak in all 16 historical years—<em>highly predictable</em></li>
+            <li>Annual peak in all 16 historical years</li>
             <li>This predictable pattern enables accurate forecasting</li>
           </ul>
         </article>
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-turquoise">↓</span>
             <h4>July-December: Minimal Complaints</h4>
           </div>
           <ul class="snappy-bullets">
@@ -171,7 +168,6 @@
         </article>
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-yellow">⚡</span>
             <h4>Methodology: Multiplicative Scaling</h4>
           </div>
           <ul class="snappy-bullets">
@@ -200,8 +196,8 @@
     <!-- ─── Slide 6: Model Selection ─────────────────────────────────────── -->
     <section class="slide" id="slide-6" aria-labelledby="title-slide-6">
       <div class="slide-header">
-        <h2 id="title-slide-6">Model Hyperparameter Selection: Validation Matrix</h2>
-        <p class="lead">Comparing 4 trend configurations (A&ndash;D) across 7 changepoint strategies on held-out test data (Aug 2025 &ndash; Jul 2026). Multiplicative seasonality with explicit event changepoints achieves the best cross-validation generalization with the lowest mean absolute percentage error (MAPE) of 18.7%.</p>
+        <h2 id="title-slide-6">Prophet Model Hyperparameter Selection: Validation Matrix</h2>
+        <p class="lead">Comparing 4 trend model configurations (Additive Smooth, Additive Flex, Multiplicative Smooth, Multiplicative Flex) across 8 different changepoint parameters. <strong>Multiplicative seasonality with explicit event changepoints</strong> achieves the best cross-validation generalization score.</p>
       </div>
       <div class="heatmap-dashboard" id="model-heatmaps-dashboard">
 
@@ -209,13 +205,12 @@
           <div class="hm-mini-grid">
           <div class="hm-mini-card">
             <div class="hm-mini-header">
-              <span class="hm-mini-label">A</span>
               <span class="hm-mini-desc">Additive Smooth</span>
             </div>
             <table class="hm-mini-table">
               <thead>
                 <tr>
-                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">Hyperparameter</th>
                   <th class="hm-mini-th">CV</th>
                   <th class="hm-mini-th">Test</th>
                 </tr>
@@ -298,13 +293,12 @@
           </div>
           <div class="hm-mini-card hm-mini-winner">
             <div class="hm-mini-header">
-              <span class="hm-mini-label">B</span>
               <span class="hm-mini-desc">Multiplicative</span>
             </div>
             <table class="hm-mini-table">
               <thead>
                 <tr>
-                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">Hyperparameter</th>
                   <th class="hm-mini-th">CV</th>
                   <th class="hm-mini-th">Test</th>
                 </tr>
@@ -388,13 +382,12 @@
           </div>
           <div class="hm-mini-card">
             <div class="hm-mini-header">
-              <span class="hm-mini-label">C</span>
               <span class="hm-mini-desc">Additive Flex</span>
             </div>
             <table class="hm-mini-table">
               <thead>
                 <tr>
-                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">Hyperparameter</th>
                   <th class="hm-mini-th">CV</th>
                   <th class="hm-mini-th">Test</th>
                 </tr>
@@ -477,13 +470,12 @@
           </div>
           <div class="hm-mini-card">
             <div class="hm-mini-header">
-              <span class="hm-mini-label">D</span>
               <span class="hm-mini-desc">Flat Trend</span>
             </div>
             <table class="hm-mini-table">
               <thead>
                 <tr>
-                  <th class="hm-mini-th">Strategy</th>
+                  <th class="hm-mini-th">Hyperparameter</th>
                   <th class="hm-mini-th">CV</th>
                   <th class="hm-mini-th">Test</th>
                 </tr>
@@ -570,22 +562,20 @@
       <div class="executive-insights-grid" style="margin-top: 1.5rem;">
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-azure">1</span>
-            <h4>Cross-Validation (CV) (14 Historical Folds)</h4>
+            <h4>14 Fold Cross-Validation (CV) Data (Dec 2009 - Jul 2025)</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Selected Model (B multiplicative | events)</strong> wins at <strong>18.7% MAPE</strong></li>
+            <li><strong>Selected Model (Multiplicative | Events)</strong> is the optimal model parameters</li>
             <li>Adding regressors inflates CV error to &gt;31%–41% due to overfitting</li>
           </ul>
         </article>
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-yellow">2</span>
-            <h4>Real-World Test (2026 Winter Shock)</h4>
+            <h4>Test Data with Extreme Winter Shock Outlier (Aug 2025 - Jul 2026)</h4>
           </div>
           <ul class="snappy-bullets">
-            <li>Regressors help fit extreme shocks (24.4% vs 27.2% test MAPE)</li>
-            <li>However, the cross validation shows those regressors having deleterious recency bias with a MAPE of 32.2% (compared to 18.7% for the selected model)</li>
+            <li>Regressors help fit extreme shocks (24.4% test MAPE beats the selected model's 27.2%)</li>
+            <li>The regressors have deleterious recency bias with a MAPE of 32.2% for the 14 years of cross validation data</li>
           </ul>
         </article>
       </div>
@@ -601,7 +591,6 @@
       <div class="executive-insights-grid">
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-turquoise">1</span>
             <h4>Data Preparation</h4>
           </div>
           <ul class="snappy-bullets">
@@ -613,7 +602,6 @@
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-azure">2</span>
             <h4>Model Engine: Facebook Prophet</h4>
           </div>
           <ul class="snappy-bullets">
@@ -627,7 +615,6 @@
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-yellow">3</span>
             <h4>Validation Protocol</h4>
           </div>
           <ul class="snappy-bullets">
@@ -639,11 +626,10 @@
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-red">4</span>
             <h4>Key Terms</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>MAPE</strong> = Mean Absolute Percentage Error — How far off predictions are, on average, as a percentage. 18.7% MAPE = off by 18.7% — Lower is better</li>
+            <li><strong>MAPE</strong> = Mean Absolute Percentage Error: How far off predictions are, on average, as a percentage. 18.7% MAPE = off by 18.7% — Lower is better</li>
             <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend. While Prophet can handle this automatically, events like the 2015 blizzard and 2020 pandemic events were set by hand</li>
             <li><strong>Regressors:</strong> Extra on/off flags for known event windows (e.g., <code>snowstorm_2015</code> = 1 for Jan–Mar 2015) that let the model handle shocks without warping the trend</li>
           </ul>
@@ -656,13 +642,12 @@
     <section class="slide" id="slide-8" aria-labelledby="title-slide-8">
       <div class="slide-header">
         <h2 id="title-slide-8">Next Steps</h2>
-        <p class="lead">Prophet is a strong baseline, but pothole formation is driven by weather. Better inputs, better models, and broader scope are the natural next steps.</p>
+        <p class="lead">While the Prophet model provides a strong forecasting baseline, there could be further model improvements with supplemental datasets and other model architectures.</p>
       </div>
 
       <div class="executive-insights-grid">
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-turquoise">1</span>
             <h4>New Data Inputs</h4>
           </div>
           <ul class="snappy-bullets">
@@ -673,7 +658,6 @@
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <span class="exec-icon exec-icon-azure">2</span>
             <h4>Alternative Model Architectures</h4>
           </div>
           <ul class="snappy-bullets">
@@ -685,6 +669,65 @@
         </article>
       </div>
     </section>
+  <script type="module" src="js/main.js?v=20260811_13"></script>
+    <section class="slide" id="slide-9" aria-labelledby="title-slide-9">
+      <div class="slide-header">
+        <h2 id="title-slide-9">Applicant: Christian Rivera</h2>
+      </div>
+      <div class="executive-insights-grid grid-2x2">
+        <!-- Card 1: Resume & Profile -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <h4>Background & Profile</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li>Specialist in quantitative forecasting, investment portfolio construction, and software development</li>
+            <li>My cats are named after U.S. states</li>
+            <li>My daughters are named after French mathematicians</li>
+          </ul>
+        </div>
+
+        <!-- Card 2: Technical Stack -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <h4>Technical Stack for this Project</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li><strong>Python</strong> for data analysis & forecasting</li>
+            <li><strong>HTML5 & CSS3</strong> for structure & design</li>
+            <li><strong>Vanilla JavaScript</strong> for interactivity</li>
+            <li><strong>Github</strong> for static site hosting</li>
+          </ul>
+        </div>
+
+        <!-- Card 3: Links & Portfolio -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <h4>See Some of My Other Work</h4>
+          </div>
+          <ul class="snappy-bullets">
+            <li><a href="https://github.com/crivera2013/forecast-case-study" target="_blank">Project GitHub Repository</a></li>
+            <li><a href="https://crivera2013.github.io" target="_blank">Main GitHub Pages Site</a></li>
+            <li>Fixed Income Portfolio Signal Attribution Analysis (upon request)</li>
+            <li>Project Management Reporting Dashboard (upon request)</li>
+          </ul>
+        </div>
+
+        <!-- Card 4: AI Collaboration -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <h4>AI Tool Assistance Attribution</h4>
+          </div>
+          <p></p>
+          <ul class="snappy-bullets">
+            <li><strong>Gemma4-26B-A4B</strong> local model</li>
+            <li><strong>Qwen3.6-27B</strong> local model</li>
+            <li><strong>Pi Agent</strong> harness coding harness</li>
+            <li>Local AI work is a hobby of mine.  Ask me about it</li>
+          </ul>
+        </div>
+      </div>
+  <script type="module" src="js/main.js?v=20260811_15"></script>
   </main>
   <script type="module" src="js/main.js?v=20260814"></script>
   <!-- ─── Slideshow Dock Controls ───────────────────────────────────────── -->

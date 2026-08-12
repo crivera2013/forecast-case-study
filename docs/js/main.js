@@ -13,7 +13,7 @@ import {
   barChart,
   enhanceTable,
   heatmapGrid,
-} from "./charts.js";
+} from "./charts.js?v=20260811_8";
 
 const DATA_DIR = "data/";
 
@@ -200,6 +200,7 @@ async function main() {
     // ── 2. Historical Baseline Chart ──
     lineChart(document.getElementById("history-chart"), {
       title: "NYC Monthly Pothole Complaints (2009-2026)",
+      yFormat: (v) => (Math.abs(v) >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(v)),
       series: [
         {
           label: "Monthly Pothole Complaints",
@@ -229,8 +230,8 @@ async function main() {
 
     lineChart(document.getElementById("forecast-chart"), {
       title: "9-Month Complaints Forecast with 95% Confidence Bounds",
-      yLabel: "Projected # Complaints",
       yTicks: [0, 4000, 8000, 12000, 16000],
+      yFormat: (v) => (Math.abs(v) >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(v)),
       series: [
         {
           label: "2026-2027 Forecasted Values",
@@ -418,6 +419,7 @@ async function main() {
     // ── 6. Test Period Evaluation Chart & Table ──
     lineChart(document.getElementById("validation-chart"), {
       title: "12-Month Held-Out Test Evaluation (Aug 2025 – Jul 2026)",
+      yFormat: (v) => (Math.abs(v) >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(v)),
       series: [
         {
           label: "Actual 311 Complaints",
