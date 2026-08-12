@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260811_20">
+  <link rel="stylesheet" href="styles.css?v=20260811_21">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -21,11 +21,11 @@
       <div class="header-controls">
         <ul class="nav-list" id="nav-menu">
           <li><a href="#slide-1" class="is-active">Summary</a></li>
-          <li><a href="#slide-2">Forecast</a></li>
+          <li><a href="#slide-2">History</a></li>
           <li class="nav-dropdown">
             <span class="nav-dropdown-trigger">Insights</span>
             <ul class="nav-dropdown-menu">
-              <li><a href="#slide-3">History</a></li>
+              <li><a href="#slide-3">Forecast</a></li>
               <li><a href="#slide-4">Seasonality</a></li>
               <li><a href="#slide-5">Stress Test</a></li>
             </ul>
@@ -54,7 +54,7 @@
         <h1 id="title-slide-1">Resource Planning Forecast: NYC Pothole Maintenance Demand</h1>
         <p class="hero-claim"><strong>Purpose:</strong> Enable the Department of Transportation (DOT) to proactively assemble crews, materials, and budget to handle fluctuating and recurring pothole maintenance</p>
         <p class="hero-claim"><strong>Result:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
-        <p class="hero-claim"><strong>Background:</strong> Following a period of unusually mild winters (2020–2025), the record snowfall of 2026 has fundamentally shifted demand patterns. To manage this new volatility, the DOT must transition to more robust, outlier-resilient forecasting to ensure resource readiness.</p>
+        <p class="hero-claim"><strong>Background:</strong> Following a period of unusually mild winters (2020–2025), the record snowfall of 2026 has significantly shifted demand patterns. To manage this new volatility, the DOT must transition to more robust, outlier-resilient forecasting to ensure resource readiness.</p>
         <p class="hero-claim"><strong>Notable Pothole Complaint Numbers</strong> </p>
         <div class="hero-metrics-grid" aria-label="Executive KPI Metrics" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
           <article class="metric-card accent-yellow">
@@ -76,31 +76,11 @@
       </div>
     </section>
 
-    <!-- ─── Slide 2: 9-Month Complaints Forecast ────────────────────────── -->
+    <!-- ─── Slide 2: Historical Baseline ─────────────────────────────────── -->
     <section class="slide" id="slide-2" aria-labelledby="title-slide-2">
       <div class="slide-header">
-        <h2 id="title-slide-2">9-Month Resource Demand Forecast (Aug 2026 – Apr 2027)</h2>
-        <p class="lead"><strong>Complaints will surge to 11k in March 2027 (~4x the autumn baseline).</strong> The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-header">
-          <span class="chart-title">Monthly Complaint Projections with 95% Confidence Bands</span>
-        </div>
-        <div id="forecast-chart" class="chart-figure"></div>
-      </div>
-
-
-      <div class="decision-box">
-        <h4>Analyst Recommendation for Leadership</h4>
-        <p><strong>Action Required:</strong> Given 2026's record snowfall, <strong>complaint volumes will likely exceed baseline forecasts</strong> for the next few months as the model adjusts to the anomalous data. Operations should scale capacity closer to the upper forecast range.</p>
-      </div>
-    </section>
-
-    <!-- ─── Slide 3: Historical Baseline ─────────────────────────────────── -->
-    <section class="slide" id="slide-3" aria-labelledby="title-slide-3">
-      <div class="slide-header">
-        <h2 id="title-slide-3">Understanding NYC's Pothole Cycles (2009–2026)</h2>
+        <h2 id="title-slide-2">Understanding NYC's Pothole Cycles (2009–2026)</h2>
+        <p class="lead">Winter snowfall leads to water seeping into asphalt and freezing. As winter ends in February/March, the ice melts leaving cavities in the asphalt and causing potholes. This causes the yearly complaint peak in March.</p>
       </div>
 
       <div class="chart-container">
@@ -130,6 +110,26 @@
             <li>Expect significantly elevated complaint volumes going forward</li>
           </ul>
         </div>
+      </div>
+    </section>
+
+    <!-- ─── Slide 3: 9-Month Complaints Forecast ────────────────────────── -->
+    <section class="slide" id="slide-3" aria-labelledby="title-slide-3">
+      <div class="slide-header">
+        <h2 id="title-slide-3">9-Month Resource Demand Forecast (Aug 2026 – Apr 2027)</h2>
+        <p class="lead"><strong>Complaints will surge to 11k in March 2027 (~4x the autumn baseline).</strong> The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-header">
+          <span class="chart-title">Monthly Complaint Projections with 95% Confidence Bands</span>
+        </div>
+        <div id="forecast-chart" class="chart-figure"></div>
+      </div>
+
+      <div class="decision-box">
+        <h4>Analyst Recommendation for Leadership</h4>
+        <p><strong>Action Required:</strong> Given 2026's record snowfall, <strong>complaint volumes will likely exceed baseline forecasts</strong> for the next few months as the model adjusts to the anomalous data. Operations should scale capacity closer to the upper forecast range.</p>
       </div>
     </section>
 
@@ -196,7 +196,7 @@
     <section class="slide" id="slide-6" aria-labelledby="title-slide-6">
       <div class="slide-header">
         <h2 id="title-slide-6">Prophet Model Hyperparameter Selection: Validation Matrix</h2>
-        <p class="lead">Comparing 4 trend model configurations (Additive Smooth, Additive Flex, Multiplicative Smooth, Multiplicative Flex) across 8 different changepoint parameters. <strong>Multiplicative seasonality with explicit event changepoints</strong> achieves the best cross-validation generalization score.</p>
+        <p class="lead">Compared 32 different models across 4 trend model configurations (Additive Smooth, Additive Flex, Multiplicative Smooth, Multiplicative Flex) and 8 different changepoint parameters. <strong>Multiplicative seasonality with explicit event changepoints</strong> achieves the best cross-validation generalization score.</p>
       </div>
       <div class="heatmap-dashboard" id="model-heatmaps-dashboard">
 
@@ -565,7 +565,7 @@
           </div>
           <ul class="snappy-bullets">
             <li><strong>Selected Model (Multiplicative | Events)</strong> provides the optimal model parameters</li>
-            <li>Adding regressors inflates CV error to &gt;31%–41% due to overfitting</li>
+            <li>Adding regressors inflates CV error &gt;31% due to overfitting</li>
           </ul>
         </article>
         <article class="exec-card">
@@ -681,7 +681,7 @@
         </div>
         <div class="exec-card">
           <div class="exec-card-header">
-            <h4>Technical Stack for this Project</h4>
+            <h4>Technical Stack For This Project</h4>
           </div>
           <ul class="snappy-bullets">
             <li><strong>Python</strong> for data analysis & forecasting</li>
@@ -714,13 +714,12 @@
             <li><strong>Gemma4-26B-A4B</strong> local model</li>
             <li><strong>Qwen3.6-27B</strong> local model</li>
             <li><strong>Pi Agent</strong> coding harness</li>
-            <li>Local AI work is a hobby of mine. Ask me about it</li>
+            <li>Local AI work is a hobby of mine. Ask me about it.</li>
           </ul>
         </div>
       </div>
-    </section>
   </main>
-  <script type="module" src="js/main.js?v=20260811_20"></script>
+  <script type="module" src="js/main.js?v=20260811_21"></script>
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
     <div class="deck-dots" id="deck-dots" role="tablist" aria-label="Slide selectors"></div>
