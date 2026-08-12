@@ -62,7 +62,31 @@ function populateTable(tableId, rowsData) {
     tbody.appendChild(tr);
   }
 }
-/* ─── Password Access Gate Controller ───────────────────────────────────── */
+/* ─── URL Access Key Gate Controller (Zero-Keystroke Auth) ───────────────── */
+const ACCESS_TOKEN = "FAS2026";
+const ACCESS_STORAGE_KEY = "nyc_pothole_access_granted";
+
+function initURLAccessGate() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const keyInURL = urlParams.get("key") || urlParams.get("access") || urlParams.get("token");
+
+  if (keyInURL === ACCESS_TOKEN) {
+    sessionStorage.setItem(ACCESS_STORAGE_KEY, "true");
+    const cleanURL = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, cleanURL);
+  }
+
+  const isGranted = sessionStorage.getItem(ACCESS_STORAGE_KEY) === "true";
+  const gateOverlay = document.getElementById("url-access-gate-overlay");
+
+  if (isGranted) {
+    if (gateOverlay) gateOverlay.style.display = "none";
+    document.body.classList.remove("is-locked");
+  } else {
+    document.body.classList.add("is-locked");
+    if (gateOverlay) gateOverlay.style.display = "flex";
+  }
+}
 const AUTH_KEY = "FAS2026";
 const AUTH_STORAGE_KEY = "nyc_pothole_briefing_auth";
 
@@ -488,7 +512,11 @@ async function main() {
 
 // Bootstrap on DOM ready
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", main);
+  document.addEventListener("DOMContentLoaded", () => {
+    initURLAccessGate();
+    main();
+  });
 } else {
+  initURLAccessGate();
   main();
 }

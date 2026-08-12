@@ -1262,7 +1262,65 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
   padding: 0;
   cursor: pointer;
 }
+/* ─── URL Access Key Gate Overlay ────────────────────────────────────────── */
 
+.gate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 5, 5, 0.88);
+  backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.gate-card {
+  background: var(--white);
+  border: 1px solid var(--ink-18);
+  padding: 2.5rem 2.25rem;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+}
+
+.gate-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--red);
+}
+
+.gate-card-header h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0.35rem 0 0.5rem;
+}
+
+.gate-card-header p {
+  font-size: 0.9rem;
+  color: var(--ink-67);
+  margin: 0;
+  line-height: 1.5;
+}
+
+body.is-locked main,
+body.is-locked header,
+body.is-locked .deck-controls {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
 
 .deck-dot.is-active {
   background: #ffffff;
