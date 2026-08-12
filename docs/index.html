@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260811_18">
+  <link rel="stylesheet" href="styles.css?v=20260811_19">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -603,7 +603,7 @@
             <h4>Model Engine &amp; Hyperparameters</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Formulation:</strong> Multiplicative GAM: $y(t) = g(t) \times (1 + s(t)) + f(\text{events}) + \varepsilon_t$</li>
+            <li><strong>Formulation:</strong> Multiplicative GAM: <code>y(t) = trend(t) × (1 + seasonality(t)) + events(t) + noise</code></li>
             <li><strong>Hyperparameters:</strong> <code>changepoint_prior_scale = 0.01</code> (prevents trend overfitting); <code>seasonality_prior_scale = 100.0</code> (captures sharp seasonal surges)</li>
             <li><strong>Inference Engine:</strong> Powered by <em>Stan</em> with Bayesian MCMC sampling (300 draws) for true 95% confidence intervals</li>
           </ul>
@@ -614,7 +614,7 @@
             <h4>Feature Engineering &amp; Regressors</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Seasonality Order:</strong> Multiplicative Fourier series ($N=10$) capturing the annual March peak without summer overprediction</li>
+            <li><strong>Seasonality Order:</strong> Multiplicative Fourier series (Order N=10) capturing the annual March peak without summer overprediction</li>
             <li><strong>Event Regressors:</strong> Binary dummy indicators for known weather shock windows (e.g., <code>snowstorm_2015 = 1</code> for Jan–Mar 2015) to isolate temporary anomalies</li>
             <li><strong>Trend Changepoints:</strong> Automatic changepoint detection combined with explicit event breaks for major municipal shocks</li>
           </ul>
@@ -625,7 +625,7 @@
             <h4>Validation Protocol &amp; Metrics</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>MAPE Metric:</strong> Mean Absolute Percentage Error ($\frac{1}{n}\sum |\frac{y - \hat{y}}{y}| \times 100\%$)</li>
+            <li><strong>MAPE Metric:</strong> Mean Absolute Percentage Error: <code>MAPE = Mean(|Actual − Forecast| / Actual) × 100%</code> (18.7% MAPE = 81.3% accuracy)</li>
             <li><strong>14-Fold Cross-Validation:</strong> 81.3% accuracy (18.7% MAPE) across all years 2009–2025</li>
             <li><strong>Held-Out Outlier Test:</strong> 72.8% accuracy (27.2% MAPE) on 12 unseen months including the record March 2026 shock</li>
           </ul>
@@ -720,7 +720,7 @@
       </div>
     </section>
   </main>
-  <script type="module" src="js/main.js?v=20260811_18"></script>
+  <script type="module" src="js/main.js?v=20260811_19"></script>
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
     <div class="deck-dots" id="deck-dots" role="tablist" aria-label="Slide selectors"></div>
