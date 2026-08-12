@@ -99,10 +99,11 @@ function parseCSVLine(line) {
 }
 
 export function formatNum(v) {
-  if (v == null || !Number.isFinite(Number(v))) return "—";
+  if (Math.abs(v) >= 1000) {
+    return (v / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  }
   return Math.round(Number(v)).toLocaleString("en-US");
 }
-
 export function formatDecimal(v, decimals = DEFAULT_DECIMAL_PLACES) {
   if (v == null || !Number.isFinite(Number(v))) return "—";
   return Number(v).toFixed(decimals);
@@ -306,7 +307,7 @@ export function lineChart(container, opts = {}) {
   const width = opts.width || 1000;
   const height = opts.height || 360;
   const defaultLeft = opts.yLabel ? 76 : 58;
-  const pad = { top: 32, right: 20, bottom: 36, left: defaultLeft, ...opts.pad };
+  const pad = { top: 32, right: 60, bottom: 36, left: defaultLeft, ...opts.pad };
   const seriesState = opts.series.map((s) => ({ ...s, visible: s.visible !== false }));
 
   function render() {
@@ -379,13 +380,13 @@ export function lineChart(container, opts = {}) {
 
     // X Ticks
     if (isDiscrete && dateKeys.length > 0) {
-      for (const k of dateKeys) {
+      dateKeys.forEach((k) => {
         const xi = x(k + "-01");
         svg.appendChild(el("line", { class: "axis-mark", x1: xi, x2: xi, y1: height - pad.bottom, y2: height - pad.bottom + 5 }));
         const label = el("text", { class: "axis-tick", x: xi, y: height - pad.bottom + 18, "text-anchor": "middle" });
         label.textContent = monthLabel(k + "-01");
         svg.appendChild(label);
-      }
+      });
     } else {
       const xTickCount = opts.xTicks || (width > 600 ? 7 : 4);
       for (let i = 0; i <= xTickCount; i++) {
@@ -675,9 +676,7 @@ export function lineChart(container, opts = {}) {
       btn.type = "button";
       btn.className = `legend-chip ${s.className || "series-actual"} ${s.visible ? "is-active" : "is-muted"}`;
       btn.setAttribute("aria-pressed", s.visible ? "true" : "false");
-      const bandHtml = s.band ? '<span class="legend-band"></span>' : '';
       btn.innerHTML = `
-        ${bandHtml}
         <span class="legend-indicator"></span>
         <span class="legend-text">${s.label}</span>
       `;

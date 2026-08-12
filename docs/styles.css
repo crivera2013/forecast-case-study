@@ -5,61 +5,59 @@
 */
 
 :root {
-  /* Primary Brand */
+  /* Primary Brand - Institutional Red & White */
   --red: #c20029;
   --white: #ffffff;
+  --ink: #040505;
 
-  /* Secondary Colors */
-  --pale-red: #ffeded;
-  --bright-red: #f6001e;
-  --dark-red: #660026;
-  --pale-turquoise: #def5f0;
+  /* Secondary Colors - Preserving Turquoise for Charts/Data */
+  --pale-red: #f9f9f9;
+  --bright-red: #c20029;
+  --dark-red: #800000;
+  --pale-turquoise: #eefaff;
   --turquoise: #1ba39c;
   --dark-turquoise: #007873;
-  --pale-yellow: #fff7de;
-  --yellow: #ffad00;
-  --dark-yellow: #bf8200;
-  --pale-azure: #e5f0fa;
+  --pale-yellow: #fcfcfc;
+  --yellow: #b38f00;
+  --dark-yellow: #806600;
+  --pale-azure: #f0f4f8;
   --chart-teal: #4dc0c0;
 
+  /* Extended Palette - Neutralized */
+  --cobalt: #00226b;
+  --azure: #003399;
+  --bright-green: #2d5a27;
+  --raspberry: #700040;
+  --fuchsia: #800060;
+  --dark-purple: #201050;
 
-
-  /* Extended Palette */
-  --cobalt: #0032a0;
-  --azure: #0071de;
-  --bright-green: #1fa824;
-  --raspberry: #82004e;
-  --fuchsia: #c6007e;
-  --dark-purple: #381c80;
-
-  /* Neutrals (Style Guide Specs) */
-  --ink-4: #f9f9f9;
-  --ink-8: #eaeaea;
-  --ink-18: #d1d1d1;
+  /* Neutrals (Corporate Scale) */
+  --ink-4: #fcfcfc;
+  --ink-8: #eeeeee;
+  --ink-18: #cccccc;
   --ink-30: #b3b4b4;
   --ink-42: #979797;
   --ink-58: #6c6c6c;
   --ink-67: #545454;
   --ink-77: #3a3a3a;
   --ink-87: #232323;
-  --ink: #040505;
   --paper: #ffffff;
 
-  /* Typography */
-  --font-display: "Mark Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-body: "Mark Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: "Fira Code", SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  /* Typography - Corporate Sans */
+  --font-display: "Univers LT Std", Arial, sans-serif;
+  --font-body: "Univers LT Std", Arial, sans-serif;
+  --font-mono: "Fira Code", monospace;
 
-  /* Spacing & Layout */
+  /* Spacing & Layout - Sharp & Flat */
   --maxw: 1400px;
   --gutter: clamp(1.25rem, 4vw, 2.5rem);
-  --radius: 10px;
-  --radius-sm: 6px;
-  --radius-lg: 16px;
-  --shadow-sm: 0 1px 3px rgba(4, 5, 5, 0.08);
-  --shadow-md: 0 4px 14px rgba(4, 5, 5, 0.08);
-  --shadow-lg: 0 10px 30px rgba(4, 5, 5, 0.12);
-  --focus-ring: 0 0 0 3px rgba(194, 0, 41, 0.35);
+  --radius: 0px;
+  --radius-sm: 0px;
+  --radius-lg: 0px;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --focus-ring: 0 0 0 2px var(--red);
 }
 
 * { box-sizing: border-box; }
@@ -386,20 +384,18 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
 
 .metric-card {
   background: var(--white);
-  border: 1px solid var(--ink-8);
+  border: 1px solid var(--ink-18);
   border-radius: var(--radius);
   padding: 1.4rem 1.25rem;
-  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 .metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: var(--red);
 }
 
 .metric-card::before {
@@ -507,25 +503,30 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
 /* ─── Business Action Grids & Roadmap Cards ──────────────────────────────── */
 
 .decision-box {
-  background: var(--pale-turquoise);
-  border-left: 4px solid var(--turquoise);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  padding: 1.25rem 1.5rem;
+  background: var(--white);
+  border: 1px solid var(--ink-18);
+  border-left: 4px solid var(--red);
+  padding: 1.5rem 1.75rem;
   margin: 1.75rem 0;
+  box-shadow: none;
+  position: relative;
 }
 
 .decision-box h4 {
-  color: var(--dark-turquoise);
+  color: var(--red);
   font-size: 1.05rem;
-  margin-bottom: 0.35rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .decision-box p {
   margin: 0;
-  color: var(--ink-77);
-  font-size: 0.95rem;
+  color: var(--ink-87);
+  font-size: 0.96rem;
+  line-height: 1.55;
 }
-
 .hero-bullets {
   list-style: none;
   padding: 0;
@@ -556,26 +557,26 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
 .snappy-bullets {
   list-style: none;
   padding: 0;
-  margin: 0.6rem 0 0;
+  margin: 0.75rem 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 .snappy-bullets li {
   position: relative;
-  padding-left: 1.1rem;
-  font-size: 0.85rem;
-  color: var(--ink-67);
-  line-height: 1.4;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+  color: var(--ink-77);
+  line-height: 1.5;
 }
 .snappy-bullets li::before {
   content: "•";
   position: absolute;
   left: 0.2rem;
   color: var(--red);
-  font-weight: bold;
+  font-size: 1.1rem;
+  line-height: 1;
 }
-
 .mape-callout {
   background: var(--pale-turquoise);
   border: 1px solid var(--turquoise);
@@ -663,55 +664,77 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
   margin: 2rem 0;
 }
 
+.executive-insights-grid.grid-2x2 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .executive-insights-grid.grid-2x2 {
+    grid-template-columns: 1fr;
+  }
+}
 .exec-card {
-  background: var(--ink-4);
-  border: 1px solid var(--ink-8);
+  background: var(--white);
+  border: 1px solid var(--ink-18);
   border-radius: var(--radius);
-  padding: 1.3rem 1.4rem;
-  transition: all 0.2s ease;
+  padding: 1.5rem 1.6rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.exec-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ink-18);
 }
 
 .exec-card:hover {
-  background: var(--white);
-  border-color: var(--ink-18);
-  box-shadow: var(--shadow-sm);
+  border-color: var(--red);
+  transform: translateY(-2px);
+}
+
+.exec-card:hover::before {
+  background: var(--red);
 }
 
 .exec-card-header {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .exec-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 800;
+  display: none !important;
 }
 
-.exec-icon-red { background: var(--pale-red); color: var(--red); }
-.exec-icon-turquoise { background: var(--pale-turquoise); color: var(--dark-turquoise); }
-.exec-icon-yellow { background: var(--pale-yellow); color: var(--dark-yellow); }
-.exec-icon-azure { background: var(--pale-azure); color: var(--cobalt); }
+.exec-icon-red { background: #fdf2f2; color: var(--red); border: 1px solid rgba(194, 0, 41, 0.2); }
+.exec-icon-turquoise { background: #eefaff; color: var(--dark-turquoise); border: 1px solid rgba(27, 163, 156, 0.25); }
+.exec-icon-yellow { background: #fffcf0; color: var(--dark-yellow); border: 1px solid rgba(179, 143, 0, 0.25); }
+.exec-icon-azure { background: #f0f4f8; color: var(--cobalt); border: 1px solid rgba(0, 34, 107, 0.2); }
 
 .exec-card h4 {
-  font-size: 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
   color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
 }
 
 .exec-card p {
   margin: 0;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--ink-67);
-  line-height: 1.45;
+  line-height: 1.5;
 }
-
 /* ─── Splits & Content Layouts ───────────────────────────────────────────── */
 
 .split-layout {
@@ -781,15 +804,15 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
   gap: 1rem;
 }
 
-.chart-line.series-actual {
-  stroke: var(--ink);
-  stroke-width: 1.5;
+.chart-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.chart-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--ink);
+.chart-line.series-actual {
+  stroke: var(--ink);
+  stroke-width: 1.5px;
 }
 
 .interactive-svg {
@@ -798,6 +821,7 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
   height: auto;
   max-height: 440px;
   user-select: none;
+  overflow: visible;
 }
 
 .chart-hover-backdrop {
@@ -807,73 +831,65 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
 /* Grid & Axis */
 .grid-line {
   stroke: var(--ink-8);
-  stroke-width: 1;
-}
-
-.zero-axis-line {
-  stroke: var(--ink-18);
-  stroke-width: 1;
+  stroke-width: 1px;
 }
 
 .axis-mark {
   stroke: var(--ink-18);
-  stroke-width: 1;
+  stroke-width: 1px;
 }
 
 .axis-tick {
-  fill: var(--ink-42);
+  fill: var(--ink-58);
   font-size: 11px;
-  font-family: var(--font-mono);
-}
-
-.axis-tick.is-highlight {
-  fill: var(--red);
-  font-weight: 700;
+  font-weight: 400;
+  stroke: none;
 }
 
 .axis-title {
-  fill: var(--ink-58);
+  fill: var(--ink-67);
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
+  stroke: none;
 }
-
 
 .chart-line.series-forecast,
 .chart-line.series-pred {
-  stroke: var(--chart-teal);
-  stroke-width: 2;
+  stroke-width: 2px;
+  stroke: var(--turquoise);
 }
-.bar-positive { fill: var(--turquoise); transition: fill 0.15s ease; }
-.bar-negative { fill: var(--dark-turquoise); transition: fill 0.15s ease; }
-.bar-highlight { fill: var(--dark-yellow); transition: fill 0.15s ease; }
+.bar-positive,
+.bar-negative,
+.bar-highlight {
+  fill: var(--turquoise);
+  transition: opacity 0.15s ease;
+}
+.chart-line.series-alt { stroke: var(--ink-42); stroke-width: 1.5px; }
+.bar-group:hover .bar-positive,
+.bar-group:hover .bar-negative,
+.bar-group:hover .bar-highlight {
+  fill: var(--turquoise);
+  opacity: 0.85;
+}
 
-.chart-line.series-alt {
-  stroke: var(--dark-yellow);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 4;
-}
-.bar-group:hover .bar-negative { fill: var(--cobalt); }
-.bar-group:hover .bar-highlight { fill: var(--yellow); }
 .chart-line.series-benchmark {
-  stroke: var(--dark-yellow);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 4;
+  stroke: var(--ink-58);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4 4;
 }
 
 .chart-band {
-  fill: rgba(0, 0, 0, 0.06);
+  fill: rgba(27, 163, 156, 0.12);
+  stroke: none;
 }
 
-.chart-band-alt {
-  fill: rgba(191, 130, 0, 0.08);
-}
-.chart-point.series-actual { fill: #040505 !important; stroke: none; }
+.chart-point.series-actual { fill: var(--ink); stroke: none; r: 3px; }
 .chart-point.series-forecast,
-.chart-point.series-pred { fill: #4dc0c0 !important; stroke: none; }
-.chart-point.series-alt { fill: #bf8200 !important; stroke: none; }
-.chart-point.series-benchmark { fill: #bf8200 !important; stroke: none; }
+.chart-point.series-pred { fill: var(--turquoise); stroke: none; r: 3px; }
+.chart-point.series-alt { fill: var(--ink-42); stroke: none; r: 3px; }
+.chart-point.series-benchmark { fill: var(--ink-58); stroke: none; r: 3px; }
 
 .chart-point {
   opacity: 0;
@@ -893,7 +909,7 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
 .event-badge-txt {
   fill: var(--dark-yellow);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 /* Interactive Hover Elements */
@@ -918,7 +934,7 @@ h4 { font-size: 1rem; margin-bottom: 0.35rem; }
   fill: var(--ink-67);
   font-size: 10.5px;
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .bar-value-label.is-highlight {
