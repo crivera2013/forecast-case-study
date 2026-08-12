@@ -592,7 +592,7 @@
             <h4>Data Cleaning &amp; Preparation</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Source API:</strong> NYC 311 Service Requests via Socrata API (Street, Highway, and Bridge Condition datasets)</li>
+            <li><strong>Source API:</strong> NYC 311 Service Data Requests via Socrata API (2020-2026 and 2009-2020 datasets)</li>
             <li><strong>Filtering &amp; Matching:</strong> Filtered for descriptor <code>%POTHOLE%</code> and <code>'Rough, Pitted or Cracked Roads'</code> (~918K total complaints aggregated into monthly series)</li>
             <li><strong>Outlier &amp; Boundary Handling:</strong> Dropped incomplete month (Aug 2026); retained true weather shocks (e.g., Mar 2026 25.2k spike) to calibrate risk without hiding climate volatility</li>
           </ul>
@@ -600,7 +600,7 @@
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>Model Engine &amp; Hyperparameters</h4>
+            <h4>Prophet Model Hyperparameters</h4>
           </div>
           <ul class="snappy-bullets">
             <li><strong>Formulation:</strong> Multiplicative Generalized Additive Model (GAM): <code>y(t) = trend(t) × (1 + seasonality(t)) + events(t) + noise</code></li>
