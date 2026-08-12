@@ -488,8 +488,7 @@ async function main() {
 
 // Bootstrap on DOM ready
 if (document.readyState === "loading") {
-    main();
-  });
+  document.addEventListener("DOMContentLoaded", main);
 } else {
   main();
 }
