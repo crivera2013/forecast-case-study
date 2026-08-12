@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260811_16">
+  <link rel="stylesheet" href="styles.css?v=20260811_17">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -52,7 +52,7 @@
     <section class="slide slide-hero" id="slide-1" aria-labelledby="title-slide-1">
       <div class="hero-content">
         <h1 id="title-slide-1">Resource Planning Forecast: NYC Pothole Maintenance Demand</h1>
-        <p class="hero-claim"><strong>Purpose:</strong> Enable the Department of Transportation (DOT) to proactively assemble crews, materials, and budget to handle recurring pothole maintenance</p>
+        <p class="hero-claim"><strong>Purpose:</strong> Enable the Department of Transportation (DOT) to proactively assemble crews, materials, and budget to handle fluctuating and recurring pothole maintenance</p>
         <p class="hero-claim"><strong>Result:</strong> A 9-month forecast of monthly NYC 311 pothole complaints (Aug 2026 – Apr 2027)</p>
         <p class="hero-claim"><strong>Background:</strong> Following a period of unusually mild winters (2020–2025), the record snowfall of 2026 has fundamentally shifted demand patterns. To manage this new volatility, the DOT must transition to more robust, outlier-resilient forecasting to ensure resource readiness.</p>
         <p class="hero-claim"><strong>Notable Pothole Complaint Numbers</strong> </p>
@@ -80,7 +80,7 @@
     <section class="slide" id="slide-2" aria-labelledby="title-slide-2">
       <div class="slide-header">
         <h2 id="title-slide-2">9-Month Resource Demand Forecast (Aug 2026 – Apr 2027)</h2>
-        <p class="lead">Through autumn, expect normal demand (~2.2k–2.8k/month). <strong>Complaints will surge to 11k in March 2027 (~4x the autumn baseline).</strong> The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
+        <p class="lead"><strong>Complaints will surge to 11k in March 2027 (~4x the autumn baseline).</strong> The forecast is presented alongside monthly data from the last major snow year, 2015, to provide context.</p>
       </div>
 
       <div class="chart-container">
@@ -182,8 +182,7 @@
     <section class="slide" id="slide-5" aria-labelledby="title-slide-5">
       <div class="slide-header">
         <h2 id="title-slide-5">Stress Test: How the Model Handled Outlier Extreme Weather in its Test Dataset</h2>
-        <p class="lead">A Model was selected based on its cross validation performance from 2009 to July 2025.  The model was then tested on August 2025-July 2026 data.  March 2026 had a record: <strong>25,171 actual complaints</strong> vs. the predicted <strong>6,807</strong>. While this outlier winter event tested the model's limits, the forecast maintained a <strong>72.8% accuracy</strong> (27.2% error).</p>
-      </div>
+        <p class="lead">A model was selected based on its cross-validation performance from 2009 to July 2025. The model was then tested on August 2025–July 2026 data. March 2026 had a record: <strong>25,171 actual complaints</strong> vs. the predicted <strong>6,807</strong>. While this outlier winter event tested the model's limits, the forecast maintained a <strong>72.8% accuracy</strong> (27.2% error).</p>
 
       <div class="chart-container">
         <div class="chart-header">
@@ -562,20 +561,20 @@
       <div class="executive-insights-grid" style="margin-top: 1.5rem;">
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>14 Fold Cross-Validation (CV) Data (Dec 2009 - Jul 2025)</h4>
+            <h4>14-Fold Cross-Validation (CV) Data (Dec 2009 – Jul 2025)</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Selected Model (Multiplicative | Events)</strong> is the optimal model parameters</li>
+            <li><strong>Selected Model (Multiplicative | Events)</strong> provides the optimal model parameters</li>
             <li>Adding regressors inflates CV error to &gt;31%–41% due to overfitting</li>
           </ul>
         </article>
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>Test Data with Extreme Winter Shock Outlier (Aug 2025 - Jul 2026)</h4>
+            <h4>Test Data with Extreme Winter Shock Outlier (Aug 2025 – Jul 2026)</h4>
           </div>
           <ul class="snappy-bullets">
             <li>Regressors help fit extreme shocks (24.4% test MAPE beats the selected model's 27.2%)</li>
-            <li>The regressors have deleterious recency bias with a MAPE of 32.2% for the 14 years of cross validation data</li>
+            <li>The regressors have deleterious recency bias with a MAPE of 32.2% for the 14 years of cross-validation data</li>
           </ul>
         </article>
       </div>
@@ -594,7 +593,7 @@
           </div>
           <ul class="snappy-bullets">
             <li><strong>Source:</strong> NYC 311 Service Requests, downloaded via the Socrata API</li>
-            <li><strong>Counted:</strong> Complaints matching <code>%POTHOLE%</code> in the descriptor field, plus <code>'Rough, Pitted or Cracked Roads'</code>, across Street, Highway, and Bridge Condition datasets (~918K total)</li>
+            <li><strong>Counted:</strong> Complaints matching <code>%POTHOLE%</code> in the descriptor field, plus <code>'Rough, Pitted or Cracked Roads'</code>, across Street, Highway, and Bridge Condition complaint types (~918K total)</li>
             <li><strong>Time range:</strong> 200 full months, Dec 2009 through Jul 2026, with only the incomplete current month (Aug 2026) dropped</li>
           </ul>
         </article>
@@ -608,8 +607,8 @@
               <br><code>y(t) = trend(t) + seasonality(t) + events(t) + noise</code></li>
             <li><strong>Trend:</strong> A baseline line that bends at detected or specified changepoints</li>
             <li><strong>Seasonality:</strong> A smooth yearly wave (Fourier series) capturing predictable recurring cycles</li>
-            <li><strong>Events:</strong> Indicator variables for known historical shocks (e.g., major snowstorms or pandemic disruptions) that isolate temporary anomalies from the underlying trend</li>
-            <li><strong>How it fits:</strong> Powered by <em>Stan</em>, a Bayesian inference engine with MCMC sampling (300 draws) is used so the confidence bands reflect true uncertainty</li>
+            <li><strong>Events:</strong> Indicator variables for known historical shocks that isolate temporary anomalies from the underlying trend</li>
+            <li><strong>Bayesian Inference:</strong> Selected MCMC sampling (300 draws) instead of Maximum A Priori (MAP) so that the confidence bands reflect true uncertainty</li>
           </ul>
         </article>
 
@@ -627,10 +626,9 @@
         <article class="exec-card">
           <div class="exec-card-header">
             <h4>Key Terms</h4>
-          </div>
           <ul class="snappy-bullets">
             <li><strong>MAPE</strong> = Mean Absolute Percentage Error: How far off predictions are, on average, as a percentage. 18.7% MAPE = off by 18.7% — Lower is better</li>
-            <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend. While Prophet can handle this automatically, events like the 2015 blizzard and 2020 pandemic events were set by hand</li>
+            <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend. While Prophet can handle this automatically, events like the 2015 blizzard and 2020 pandemic were set by hand</li>
             <li><strong>Regressors:</strong> Extra on/off flags for known event windows (e.g., <code>snowstorm_2015</code> = 1 for Jan–Mar 2015) that let the model handle shocks without warping the trend</li>
           </ul>
         </article>
@@ -651,8 +649,8 @@
             <h4>New Data Inputs</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Weather:</strong> Snowfall, rainfall, and freeze-thaw cycles are the main drivers of pothole formation.  Therefore using temperature, precipitation, and snow-depth data as inputs for the forecast as leading indicators would probably improve the model results</li>
-            <li><strong>Cave-in complaints:</strong> "Cave-ins" are potholes formed due to freeze-thaw-induced cavities under the asphalt instead of within the asphalt.  While "cave-in" complaints are handled by a different department, there are ~168K cave-in records in the 311 dataset and including them could provide more information to improve forecasting</li>
+            <li><strong>Weather:</strong> Snowfall, rainfall, and freeze-thaw cycles are the main drivers of pothole formation. Therefore, using temperature, precipitation, and snow-depth data as inputs for the forecast as leading indicators would probably improve the model results</li>
+            <li><strong>Cave-in complaints:</strong> "Cave-ins" are potholes formed due to freeze-thaw-induced cavities under the asphalt instead of within the asphalt. While "cave-in" complaints are handled by a different department, there are ~168K cave-in records in the 311 dataset and including them could provide more information to improve forecasting</li>
           </ul>
         </article>
 
@@ -669,7 +667,6 @@
         </article>
       </div>
     </section>
-  <script type="module" src="js/main.js?v=20260811_13"></script>
     <section class="slide" id="slide-9" aria-labelledby="title-slide-9">
       <div class="slide-header">
         <h2 id="title-slide-9">Applicant: Christian Rivera</h2>
@@ -694,7 +691,7 @@
             <li><strong>Python</strong> for data analysis & forecasting</li>
             <li><strong>HTML5 & CSS3</strong> for structure & design</li>
             <li><strong>Vanilla JavaScript</strong> for interactivity</li>
-            <li><strong>Github</strong> for static site hosting</li>
+            <li><strong>GitHub Pages</strong> for static site hosting</li>
             <li>The Vanguard style guide</li>
           </ul>
         </div>
@@ -717,16 +714,15 @@
           <div class="exec-card-header">
             <h4>AI Tool Assistance Attribution</h4>
           </div>
-          <p></p>
           <ul class="snappy-bullets">
             <li><strong>Gemma4-26B-A4B</strong> local model</li>
             <li><strong>Qwen3.6-27B</strong> local model</li>
-            <li><strong>Pi Agent</strong> harness coding harness</li>
-            <li>Local AI work is a hobby of mine.  Ask me about it</li>
+            <li><strong>Pi Agent</strong> coding harness</li>
+            <li>Local AI work is a hobby of mine. Ask me about it</li>
           </ul>
         </div>
       </div>
-  <script type="module" src="js/main.js?v=20260811_16"></script>
+  <script type="module" src="js/main.js?v=20260811_17"></script>
   <!-- ─── Slideshow Dock Controls ───────────────────────────────────────── -->
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
