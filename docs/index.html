@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260811_15">
+  <link rel="stylesheet" href="styles.css?v=20260811_16">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -585,7 +585,6 @@
     <section class="slide" id="slide-7" aria-labelledby="title-slide-7">
       <div class="slide-header">
         <h2 id="title-slide-7">Methodology: Data Pipeline, Model Engine &amp; Validation</h2>
-        <p class="lead">The data pipeline, model engine, and validation protocol.</p>
       </div>
 
       <div class="executive-insights-grid">
@@ -607,8 +606,9 @@
           <ul class="snappy-bullets">
             <li><strong>What it is:</strong> A Generalized Additive Model (GAM) that splits a time series into three parts:
               <br><code>y(t) = trend(t) + seasonality(t) + events(t) + noise</code></li>
-            <li><strong>Trend:</strong> A straight line that can bend at changepoints. Bends are detected automatically, supplemented with two explicit breaks: the 2015 snowstorms and the 2020 pandemic</li>
-            <li><strong>Seasonality:</strong> A smooth yearly wave (Fourier series) that captures the March peak and summer trough without overfitting</li>
+            <li><strong>Trend:</strong> A baseline line that bends at detected or specified changepoints</li>
+            <li><strong>Seasonality:</strong> A smooth yearly wave (Fourier series) capturing predictable recurring cycles</li>
+            <li><strong>Events:</strong> Indicator variables for known historical shocks (e.g., major snowstorms or pandemic disruptions) that isolate temporary anomalies from the underlying trend</li>
             <li><strong>How it fits:</strong> Powered by <em>Stan</em>, a Bayesian inference engine with MCMC sampling (300 draws) is used so the confidence bands reflect true uncertainty</li>
           </ul>
         </article>
@@ -686,8 +686,6 @@
             <li>My daughters are named after French mathematicians</li>
           </ul>
         </div>
-
-        <!-- Card 2: Technical Stack -->
         <div class="exec-card">
           <div class="exec-card-header">
             <h4>Technical Stack for this Project</h4>
@@ -697,6 +695,7 @@
             <li><strong>HTML5 & CSS3</strong> for structure & design</li>
             <li><strong>Vanilla JavaScript</strong> for interactivity</li>
             <li><strong>Github</strong> for static site hosting</li>
+            <li>The Vanguard style guide</li>
           </ul>
         </div>
 
@@ -727,9 +726,7 @@
           </ul>
         </div>
       </div>
-  <script type="module" src="js/main.js?v=20260811_15"></script>
-  </main>
-  <script type="module" src="js/main.js?v=20260814"></script>
+  <script type="module" src="js/main.js?v=20260811_16"></script>
   <!-- ─── Slideshow Dock Controls ───────────────────────────────────────── -->
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
