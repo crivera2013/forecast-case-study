@@ -7,7 +7,7 @@ This repository contains an end-to-end data pipeline, time-series forecasting en
 ### Purpose & Objective
 - **Problem**: Following five years of unusually mild winters (2020–2025), the record snowfall of 2026 triggered an unprecedented surge in pothole complaints (25,171 in March 2026; 5.1× baseline). Legacy linear models fail to capture such extreme climate volatility.
 - **Solution**: Built a 9-month predictive resource planning forecast (Aug 2026 – Apr 2027) using Meta's **Prophet (Generalized Additive Model)** trained on 200 months of NYC 311 Open Data (~918K records from Dec 2009 through Jul 2026).
-- **Deliverable**: An interactive, dependency-free executive presentation deck published via GitHub Pages (`docs/`), styled under an institutional Vanguard design system to help DOT leadership proactively deploy maintenance crews, asphalt, and budget before winter surges.
+- **Deliverable**: An interactive, dependency-free executive presentation deck published via Cloudflare Pages (`docs/`), styled under an institutional Vanguard design system to help DOT leadership proactively deploy maintenance crews, asphalt, and budget before winter surges.
 
 ---
 
@@ -35,9 +35,9 @@ SOCRATA_API_KEY_SECRET=your_api_key_secret_here
 
 These credentials can be obtained from the [NYC Open Data portal](https://opendata.cityofnewyork.us/).
 
-## Static Case-Study Site (GitHub Pages)
+## Static Case-Study Site (Cloudflare Pages)
 
-The repository includes a static case-study site under `docs/`, published with GitHub Pages. It presents the forecast narrative and renders the charts from the CSV artifacts in `docs/data/` — no Python or server is required at runtime.
+The repository includes a static case-study site under `docs/`, published with Cloudflare Pages. It presents the forecast narrative and renders the charts from the CSV artifacts in `docs/data/` — no Python or server is required at runtime.
 
 ### Local preview
 
@@ -51,7 +51,7 @@ Then open <http://localhost:8000/>.
 
 > Note: the deployed site lives under the `/forecast-case-study/` project subpath, and the page fetches `data/*.csv` at runtime, so opening `docs/index.html` directly via `file://` will not work (browsers block `fetch` on `file://` URLs). Use the local server above or the deployed site.
 
-### Publishing to GitHub Pages
+### Publishing to Cloudflare Pages
 
 1. Push the default branch (with `docs/` committed) to GitHub.
 2. In the repository on GitHub, go to **Settings → Pages → Build and deployment**.
