@@ -37,7 +37,7 @@ These credentials can be obtained from the [NYC Open Data portal](https://openda
 
 ## Static Case-Study Site (Cloudflare Pages)
 
-The repository includes a static case-study site under `docs/`, published with Cloudflare Pages. It presents the forecast narrative and renders the charts from the CSV artifacts in `docs/data/` — no Python or server is required at runtime.
+The repository includes a static case-study site under `docs/`, published with Cloudflare Pages. It presents the forecast narrative and renders the charts from the CSV artifacts in `docs/data/` — no Python or server is required at runtime.  small change
 
 ### Local preview
 
