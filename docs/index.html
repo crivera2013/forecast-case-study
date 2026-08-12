@@ -6,7 +6,7 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260811_17">
+  <link rel="stylesheet" href="styles.css?v=20260811_18">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -589,51 +589,47 @@
       <div class="executive-insights-grid">
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>Data Preparation</h4>
+            <h4>Data Cleaning &amp; Preparation</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Source:</strong> NYC 311 Service Requests, downloaded via the Socrata API</li>
-            <li><strong>Counted:</strong> Complaints matching <code>%POTHOLE%</code> in the descriptor field, plus <code>'Rough, Pitted or Cracked Roads'</code>, across Street, Highway, and Bridge Condition complaint types (~918K total)</li>
-            <li><strong>Time range:</strong> 200 full months, Dec 2009 through Jul 2026, with only the incomplete current month (Aug 2026) dropped</li>
+            <li><strong>Source API:</strong> NYC 311 Service Requests via Socrata API (Street, Highway, and Bridge Condition datasets)</li>
+            <li><strong>Filtering &amp; Matching:</strong> Filtered for descriptor <code>%POTHOLE%</code> and <code>'Rough, Pitted or Cracked Roads'</code> (~918K total complaints aggregated into monthly series)</li>
+            <li><strong>Outlier &amp; Boundary Handling:</strong> Dropped incomplete month (Aug 2026); retained true weather shocks (e.g., Mar 2026 25.2k spike) to calibrate risk without hiding climate volatility</li>
           </ul>
         </article>
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>Model Engine: Facebook Prophet</h4>
+            <h4>Model Engine &amp; Hyperparameters</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>What it is:</strong> A Generalized Additive Model (GAM) that splits a time series into three parts:
-              <br><code>y(t) = trend(t) + seasonality(t) + events(t) + noise</code></li>
-            <li><strong>Trend:</strong> A baseline line that bends at detected or specified changepoints</li>
-            <li><strong>Seasonality:</strong> A smooth yearly wave (Fourier series) capturing predictable recurring cycles</li>
-            <li><strong>Events:</strong> Indicator variables for known historical shocks that isolate temporary anomalies from the underlying trend</li>
-            <li><strong>Bayesian Inference:</strong> Selected MCMC sampling (300 draws) instead of Maximum A Priori (MAP) so that the confidence bands reflect true uncertainty</li>
+            <li><strong>Formulation:</strong> Multiplicative GAM: $y(t) = g(t) \times (1 + s(t)) + f(\text{events}) + \varepsilon_t$</li>
+            <li><strong>Hyperparameters:</strong> <code>changepoint_prior_scale = 0.01</code> (prevents trend overfitting); <code>seasonality_prior_scale = 100.0</code> (captures sharp seasonal surges)</li>
+            <li><strong>Inference Engine:</strong> Powered by <em>Stan</em> with Bayesian MCMC sampling (300 draws) for true 95% confidence intervals</li>
           </ul>
         </article>
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>Validation Protocol</h4>
+            <h4>Feature Engineering &amp; Regressors</h4>
           </div>
           <ul class="snappy-bullets">
-            <li><strong>Held-out test:</strong> 72.8% accurate (27.2% MAPE) on 12 unseen months that include the record March 2026 winter</li>
-            <li><strong>14-fold cross-validation:</strong> 81.3% accurate (18.7% MAPE) across every year from 2009–2025</li>
-            <li><strong>32-config search:</strong> 4 trend types &times; 8 changepoint strategies were tested; the winner was selected by lowest CV error</li>
+            <li><strong>Seasonality Order:</strong> Multiplicative Fourier series ($N=10$) capturing the annual March peak without summer overprediction</li>
+            <li><strong>Event Regressors:</strong> Binary dummy indicators for known weather shock windows (e.g., <code>snowstorm_2015 = 1</code> for Jan–Mar 2015) to isolate temporary anomalies</li>
+            <li><strong>Trend Changepoints:</strong> Automatic changepoint detection combined with explicit event breaks for major municipal shocks</li>
           </ul>
         </article>
 
         <article class="exec-card">
           <div class="exec-card-header">
-            <h4>Key Terms</h4>
+            <h4>Validation Protocol &amp; Metrics</h4>
+          </div>
           <ul class="snappy-bullets">
-            <li><strong>MAPE</strong> = Mean Absolute Percentage Error: How far off predictions are, on average, as a percentage. 18.7% MAPE = off by 18.7% — Lower is better</li>
-            <li><strong>Changepoint:</strong> A date where the trend line is allowed to bend. While Prophet can handle this automatically, events like the 2015 blizzard and 2020 pandemic were set by hand</li>
-            <li><strong>Regressors:</strong> Extra on/off flags for known event windows (e.g., <code>snowstorm_2015</code> = 1 for Jan–Mar 2015) that let the model handle shocks without warping the trend</li>
+            <li><strong>MAPE Metric:</strong> Mean Absolute Percentage Error ($\frac{1}{n}\sum |\frac{y - \hat{y}}{y}| \times 100\%$)</li>
+            <li><strong>14-Fold Cross-Validation:</strong> 81.3% accuracy (18.7% MAPE) across all years 2009–2025</li>
+            <li><strong>Held-Out Outlier Test:</strong> 72.8% accuracy (27.2% MAPE) on 12 unseen months including the record March 2026 shock</li>
           </ul>
         </article>
-
-      </div>
     </section>
 
     <!-- ─── Slide 8: Future Directions ───────────────────────────────────── -->
@@ -722,8 +718,9 @@
           </ul>
         </div>
       </div>
-  <script type="module" src="js/main.js?v=20260811_17"></script>
-  <!-- ─── Slideshow Dock Controls ───────────────────────────────────────── -->
+    </section>
+  </main>
+  <script type="module" src="js/main.js?v=20260811_18"></script>
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
     <div class="deck-dots" id="deck-dots" role="tablist" aria-label="Slide selectors"></div>
