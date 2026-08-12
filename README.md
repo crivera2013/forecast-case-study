@@ -1,4 +1,15 @@
-NYC 311 Road Surface Complaint Data
+# NYC Pothole Demand Forecasting — Senior Lead Analyst Case Study
+
+## Project Overview
+
+This repository contains an end-to-end data pipeline, time-series forecasting engine, and interactive executive briefing site developed for the **NYC Department of Transportation (DOT)**.
+
+### Purpose & Objective
+- **Problem**: Following five years of unusually mild winters (2020–2025), the record snowfall of 2026 triggered an unprecedented surge in pothole complaints (25,171 in March 2026; 5.1× baseline). Legacy linear models fail to capture such extreme climate volatility.
+- **Solution**: Built a 9-month predictive resource planning forecast (Aug 2026 – Apr 2027) using Meta's **Prophet (Generalized Additive Model)** trained on 200 months of NYC 311 Open Data (~918K records from Dec 2009 through Jul 2026).
+- **Deliverable**: An interactive, dependency-free executive presentation deck published via GitHub Pages (`docs/`), styled under an institutional Vanguard design system to help DOT leadership proactively deploy maintenance crews, asphalt, and budget before winter surges.
+
+---
 
 # Setup
 
