@@ -488,11 +488,8 @@ async function main() {
 
 // Bootstrap on DOM ready
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    initPasswordGate();
     main();
   });
 } else {
-  initPasswordGate();
   main();
 }

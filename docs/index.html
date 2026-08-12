@@ -6,27 +6,9 @@
   <title>NYC Pothole Resource Demand Forecast · Executive Decision Briefing</title>
   <meta name="description" content="Executive decision briefing: Resource planning forecast for NYC 311 pothole complaints, enabling DOT to proactively deploy crews and budget before winter surges. Built from 16 years of historical data with rigorous validation.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260811_24">
+  <link rel="stylesheet" href="styles.css?v=20260811_25">
 </head>
 <body>
-  <!-- ─── Access Gate Password Modal ──────────────────────────────────────── -->
-  <div id="password-gate-overlay" class="gate-overlay" style="display: none;">
-    <div class="gate-card">
-      <div class="gate-card-header">
-        <span class="brand-badge" style="width: fit-content; margin-bottom: 0.5rem; display: inline-block;">NYC DOT BRIEFING</span>
-        <h2>Executive Access Key Required</h2>
-        <p>This decision briefing is protected. Please enter the access password to proceed.</p>
-      </div>
-      <form id="gate-form" class="gate-form">
-        <div class="gate-input-group">
-          <input type="password" id="gate-password-input" placeholder="Enter password..." autocomplete="current-password" required />
-          <button type="submit" class="btn btn-primary">Unlock Briefing</button>
-        </div>
-        <div id="gate-error" class="gate-error" style="display: none;">Incorrect password. Please try again.</div>
-      </form>
-    </div>
-  </div>
-
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <!-- Top Executive Header -->
   <header class="site-header">
@@ -705,7 +687,6 @@
             <li><strong>HTML5 & CSS3</strong> for structure & design</li>
             <li><strong>Vanilla JavaScript</strong> for interactivity</li>
             <li><strong>Cloudflare Pages</strong> for static site hosting</li>
-            <li>The Vanguard style guide</li>
           </ul>
         </div>
 
@@ -735,14 +716,11 @@
         </div>
       </div>
   </main>
-  <script type="module" src="js/main.js?v=20260811_22"></script>
+  <script type="module" src="js/main.js?v=20260811_25"></script>
   <nav class="deck-controls" id="deck-controls" aria-label="Slide deck controls">
     <button type="button" class="deck-btn" id="deck-prev" title="Previous Slide (Left Arrow)" aria-label="Previous slide">‹</button>
     <div class="deck-dots" id="deck-dots" role="tablist" aria-label="Slide selectors"></div>
     <span class="deck-counter" id="deck-counter" aria-live="polite">Slide 1 of 8</span>
     <button type="button" class="deck-btn" id="deck-next" title="Next Slide (Right Arrow or Space)" aria-label="Next slide">›</button>
   </nav>
-
-  <script type="module" src="js/main.js?v=20260811_24"></script>
 </body>
-</html>
