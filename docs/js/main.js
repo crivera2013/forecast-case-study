@@ -62,7 +62,45 @@ function populateTable(tableId, rowsData) {
     tbody.appendChild(tr);
   }
 }
+/* ─── Password Access Gate Controller ───────────────────────────────────── */
+const AUTH_KEY = "FAS2026";
+const AUTH_STORAGE_KEY = "nyc_pothole_briefing_auth";
 
+function initPasswordGate() {
+  const isAuth = sessionStorage.getItem(AUTH_STORAGE_KEY) === "true";
+  const gateOverlay = document.getElementById("password-gate-overlay");
+  const gateForm = document.getElementById("gate-form");
+  const gateInput = document.getElementById("gate-password-input");
+  const gateError = document.getElementById("gate-error");
+
+  if (isAuth) {
+    if (gateOverlay) gateOverlay.style.display = "none";
+    document.body.classList.remove("is-locked");
+    return;
+  }
+
+  // Lock site
+  document.body.classList.add("is-locked");
+  if (gateOverlay) gateOverlay.style.display = "flex";
+  setTimeout(() => gateInput?.focus(), 100);
+
+  gateForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const entered = gateInput?.value?.trim();
+    if (entered === AUTH_KEY) {
+      sessionStorage.setItem(AUTH_STORAGE_KEY, "true");
+      document.body.classList.remove("is-locked");
+      if (gateOverlay) gateOverlay.style.display = "none";
+    } else {
+      if (gateError) gateError.style.display = "block";
+      if (gateInput) {
+        gateInput.style.borderColor = "var(--red)";
+        gateInput.value = "";
+        gateInput.focus();
+      }
+    }
+  });
+}
 /* ─── Presentation Slide Deck Controller ─────────────────────────────────── */
 
 function initSlideDeck() {
@@ -450,7 +488,11 @@ async function main() {
 
 // Bootstrap on DOM ready
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", main);
+  document.addEventListener("DOMContentLoaded", () => {
+    initPasswordGate();
+    main();
+  });
 } else {
+  initPasswordGate();
   main();
 }
